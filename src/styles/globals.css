@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Default styles */
+@layer base {
+  h1 {
+    @apply text-5xl;
+    @apply font-semibold;
+    @apply dark:text-white;
+  }
+  h2 {
+    @apply text-4xl;
+    @apply font-semibold;
+    @apply dark:text-white;
+  }
+  h3 {
+    @apply text-3xl;
+    @apply font-semibold;
+    @apply dark:text-white;
+  }
+  h4 {
+    @apply text-2xl;
+    @apply font-semibold;
+    @apply dark:text-white;
+  }
+  h5 {
+    @apply text-xl;
+    @apply font-semibold;
+    @apply dark:text-white;
+  }
+}
+
+/* Hide numeric input arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
