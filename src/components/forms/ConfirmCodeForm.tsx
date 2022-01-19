@@ -1,9 +1,8 @@
 import dynamic from "next/dynamic";
-import Link from "next/link";
+
 import React, { useState } from "react";
 const ReactCodeInput = dynamic(import("react-code-input"));
 import Button from "../form/Button";
-import Input from "../form/Input";
 
 interface ConfirmSignUpFormProps {
   onSubmit: (value: string) => void;

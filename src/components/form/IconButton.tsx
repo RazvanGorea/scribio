@@ -1,31 +1,44 @@
-import React from "react";
+import Link from "next/link";
+import React, { memo } from "react";
+import { IconType } from "react-icons";
 
 interface IconButtonProps {
-  children: React.ReactNode;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: React.CSSProperties;
+  href?: string;
   shape?: "square" | "circle";
+  icon: IconType;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
-  children,
+  icon,
   onClick,
   style,
   shape = "circle",
+  href,
 }) => {
+  const IconComp = icon;
   const isCircle = shape === "circle";
 
-  return (
-    <div
+  const button = (
+    <button
       style={style}
       onClick={onClick}
       className={`${
         isCircle ? "rounded-full" : "rounded"
       } cursor-pointer bg-black dark:bg-white dark:bg-opacity-0 dark:hover:bg-opacity-10 p-2 bg-opacity-0 hover:bg-opacity-10 active:bg-opacity-25 dark:active:bg-opacity-25 transition-colors ease-out`}
     >
-      {children}
-    </div>
+      <IconComp size={25} className="text-black dark:text-white" />
+    </button>
+  );
+
+  return href ? (
+    <Link href={href}>
+      <a>{button}</a>
+    </Link>
+  ) : (
+    button
   );
 };
 
-export default IconButton;
+export default memo(IconButton);

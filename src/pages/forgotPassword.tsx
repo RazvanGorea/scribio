@@ -1,4 +1,5 @@
 import { FormikHelpers } from "formik";
+import { NextPage } from "next";
 import React, { useState } from "react";
 import Lottie from "react-lottie";
 import {
@@ -16,15 +17,13 @@ import NewPasswordForm, {
 } from "../components/forms/NewPasswordForm";
 import { useAuth } from "../context/AuthContext";
 
-interface ForgotPasswordProps {}
-
 interface IState {
   email: string;
   confirmation_code: string;
   step: "init" | "confirm" | "finish";
 }
 
-const ForgotPassword: React.FC<ForgotPasswordProps> = () => {
+const ForgotPassword: NextPage = () => {
   const [state, setState] = useState<IState>({
     email: "",
     confirmation_code: "",

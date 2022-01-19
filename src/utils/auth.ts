@@ -2,7 +2,7 @@ import { getProfile, refreshAccessToken } from "../api/auth";
 import { setNewBearerToken } from "../api/axios";
 import { User } from "../types/User.type";
 
-// Check if code runs in browser
+// Check if code runs client side
 const isClient = typeof window !== "undefined";
 
 export async function initAuth() {

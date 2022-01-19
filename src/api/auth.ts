@@ -1,4 +1,7 @@
+import axios from "axios";
+import config from "../config";
 import client from "./axios";
+import { User, UserWithOptionalAvatar } from "../types/User.type";
 
 interface SuccessMessageResponse {
   message: string;
@@ -11,7 +14,7 @@ interface InitSignUpProps {
 }
 
 export async function initSignUp(data: InitSignUpProps) {
-  const res = await client.post<string>("auth/initSignUp", data);
+  const res = await client.post<string>("/auth/initSignUp", data);
   return res.data;
 }
 
@@ -20,16 +23,13 @@ interface FinishSignUpProps {
   confirmation_code: string | number;
 }
 
-interface LoginResponse {
-  _id: string;
-  username: string;
-  email: string;
+interface LoginResponse extends UserWithOptionalAvatar {
   access_token: string;
   refresh_token: string;
 }
 
 export async function finishSignUp(data: FinishSignUpProps) {
-  const res = await client.post<LoginResponse>("auth/finishSignUp", data);
+  const res = await client.post<LoginResponse>("/auth/finishSignUp", data);
   return res.data;
 }
 
@@ -39,30 +39,38 @@ interface SignInProps {
 }
 
 export async function logIn(data: SignInProps) {
-  const res = await client.post<LoginResponse>("auth/logIn", data);
+  const res = await client.post<LoginResponse>("/auth/logIn", data);
   return res.data;
 }
 
 export async function logOut() {
-  const res = await client.post<SuccessMessageResponse>("auth/logOut");
+  const res = await client.post<SuccessMessageResponse>("/auth/logOut");
   return res.data;
 }
 
 export async function googleAuth(data: { token: string }) {
-  const res = await client.post<LoginResponse>("auth/google", data);
+  const res = await client.post<LoginResponse>("/auth/google", data);
   return res.data;
 }
 
 interface RefreshAccessTokenResponse {
   message: string;
-  data: string;
+  access_token: string;
 }
 
+/**
+ NOTE
+refreshAccessToken function uses global axios
+instance instead of 'client' because this function
+is also used in 'client' instance interceptor.
+Using 'client' will cause infinite loop
+ */
 export async function refreshAccessToken() {
-  const res = await client.get<RefreshAccessTokenResponse>(
-    "auth/refreshAccessToken"
+  const res = await axios.get<RefreshAccessTokenResponse>(
+    `${config.apiBaseUrl}/auth/refreshAccessToken`,
+    { withCredentials: true }
   );
-  return res.data.data;
+  return res.data.access_token;
 }
 
 interface GetProfileResponse {
@@ -72,13 +80,13 @@ interface GetProfileResponse {
 }
 
 export async function getProfile() {
-  const res = await client.get<GetProfileResponse>("auth/profile");
+  const res = await client.get<GetProfileResponse>("/auth/profile");
   return res.data;
 }
 
 export async function initResetPassword(data: { email: string }) {
   const res = await await client.post<SuccessMessageResponse>(
-    "auth/initPasswordReset",
+    "/auth/initPasswordReset",
     data
   );
 
@@ -94,7 +102,7 @@ interface CheckResetPasswordCodeProps {
 export async function checkResetPasswordCode(
   data: CheckResetPasswordCodeProps
 ) {
-  const res = await client.post("auth/checkPasswordReset", data);
+  const res = await client.post("/auth/checkPasswordReset", data);
   return res.data;
 }
 
@@ -106,7 +114,7 @@ interface FinishPasswordReset {
 
 export async function finishResetPassword(data: FinishPasswordReset) {
   const res = await client.post<LoginResponse>(
-    "auth/finishPasswordReset",
+    "/auth/finishPasswordReset",
     data
   );
   return res.data;

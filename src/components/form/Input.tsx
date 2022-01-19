@@ -9,7 +9,7 @@ interface InputProps {
   label?: string;
   type?: React.HTMLInputTypeAttribute;
   placeholder?: string;
-  required: boolean;
+  required?: boolean;
   error?: string | false;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
@@ -54,16 +54,8 @@ const Input: React.FC<InputProps> = ({
             style={{ position: "absolute", right: 0 }}
             onClick={() => setVisible((val) => !val)}
             shape="square"
-          >
-            {visible ? (
-              <AiFillEye className="text-black dark:text-white " size={23} />
-            ) : (
-              <AiFillEyeInvisible
-                className="text-black dark:text-white opacity-80"
-                size={23}
-              />
-            )}
-          </IconButton>
+            icon={visible ? AiFillEye : AiFillEyeInvisible}
+          />
         )}
       </div>
       {error && typeof error === "string" && (

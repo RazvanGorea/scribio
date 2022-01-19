@@ -1,7 +1,11 @@
+import { ImageData } from "./ImageData.type";
+
 export type User = {
   _id: string;
   username: string;
   email: string;
-  avatar_url?: string;
-  avatar_url_sm?: string;
+  avatar: ImageData;
 };
+
+export type UserWithOptionalAvatar = Partial<Pick<User, "avatar">> &
+  Omit<User, "avatar">;

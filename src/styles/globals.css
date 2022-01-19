@@ -41,3 +41,19 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* Editor JS styles */
+.cdx-block,
+.ce-toolbox__button,
+.ce-toolbar__plus,
+.ce-settings__button,
+.cdx-settings-button,
+/*react-drag-drop-files styles*/
+.ebdQkY > span {
+  @apply dark:text-white;
+}
+
+.ce-settings--opened {
+  @apply dark:bg-gray-600;
+  @apply dark:text-white;
+}

@@ -1,10 +1,9 @@
+import { NextPage } from "next";
 import React from "react";
 import Lottie from "react-lottie";
 import * as notFoundAnim from "../assets/lottie/404.json";
 
-interface Custom404Props {}
-
-const Custom404: React.FC<Custom404Props> = () => {
+const Custom404: NextPage = () => {
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <h1>Not Found</h1>
