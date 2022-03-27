@@ -11,7 +11,7 @@ import NewPostForm, {
 } from "../../components/forms/NewPostForm";
 import ImageUploader from "../../components/imageRelated/ImageUploader";
 const Editor = dynamic(import("../../components/Editor"), { ssr: false });
-import Container from "../../components/layout/Container";
+// import Container from "../../components/layout/Container";
 import ImageCropModal from "../../components/modals/ImageCropModal";
 
 const NewPost: NextPage = () => {
