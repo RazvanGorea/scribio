@@ -62,23 +62,13 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async (
-  context
-) => {
+export const getStaticProps: GetStaticProps<HomeProps> = async (context) => {
   const posts = await getAllPosts();
 
+  // Pass post data to the page via props
   return {
     props: { posts },
   };
 };
-
-// export const getStaticProps: GetStaticProps<HomeProps> = async (context) => {
-//   const posts = await getAllPosts();
-
-//   // Pass post data to the page via props
-//   return {
-//     props: { posts },
-//   };
-// };
 
 export default Home;
