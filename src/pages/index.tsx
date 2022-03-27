@@ -1,4 +1,4 @@
-import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
+import type { GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../api/posts";
@@ -64,6 +64,8 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
 
 export const getStaticProps: GetStaticProps<HomeProps> = async (context) => {
   const posts = await getAllPosts();
+
+  console.log("getInitialProps fetch: ", posts);
 
   // Pass post data to the page via props
   return {
