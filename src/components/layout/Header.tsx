@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = () => {
   return (
     <>
       <NavMenu onClose={() => setVisible(false)} visible={visible} />
-      <Headroom>
+      <Headroom style={{ zIndex: 2 }}>
         <header className="sticky flex items-center justify-between w-full px-6 py-3 bg-white shadow-lg dark:bg-gray-700 ">
           <div className="flex space-x-2">
             <IconButton
@@ -53,16 +53,9 @@ const Header: React.FC<HeaderProps> = () => {
               onClick={toggle}
               shape="square"
             />
-            {user?.avatar && (
+            {user && (
               <div>
-                <Avatar
-                  src={{
-                    height: user.avatar.height,
-                    width: user.avatar.width,
-                    src: user.avatar.url,
-                    blurDataURL: user.avatar.placeholder,
-                  }}
-                />
+                <Avatar src={user.avatar} />
               </div>
             )}
             <Unauthenticated>

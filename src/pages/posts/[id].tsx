@@ -13,9 +13,7 @@ const Post: NextPage<PostProps> = ({ post }) => {
   console.log(post);
 
   const content = useMemo(() => {
-    if (post) {
-      return contentParser(post.content);
-    }
+    if (post) return contentParser(post.content);
   }, [post]);
 
   if (!post) return <div>Loading...</div>;

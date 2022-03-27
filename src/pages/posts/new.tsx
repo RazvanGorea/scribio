@@ -9,11 +9,9 @@ import { EditorCore } from "../../components/Editor";
 import NewPostForm, {
   NewPostFormValues,
 } from "../../components/forms/NewPostForm";
-import ImageCrop from "../../components/imageRelated/ImageCrop";
 import ImageUploader from "../../components/imageRelated/ImageUploader";
 const Editor = dynamic(import("../../components/Editor"), { ssr: false });
 import Container from "../../components/layout/Container";
-import Modal from "../../components/layout/Modal";
 import ImageCropModal from "../../components/modals/ImageCropModal";
 
 const NewPost: NextPage = () => {
@@ -41,12 +39,11 @@ const NewPost: NextPage = () => {
       // Create new post
       const res = await createPost({
         title: values.title,
-        minutesToRead: values.minutesToRead,
         thumbnail: croppedThumbnail,
         content: data,
       });
 
-      console.log(res);
+      // console.log(res);
       setSubmitting(false);
       router.push(`/posts/${res.postId}`);
     } catch (error: any) {
@@ -75,26 +72,33 @@ const NewPost: NextPage = () => {
 
   return (
     <Authenticated redirectPath="/">
-      <Container sm>
-        <Editor onInitialize={(instance) => (editorRef.current = instance)} />
-        <div className="flex justify-center mt-8 mb-2">
-          <div className="w-full max-w-xs">
-            <ImageUploader
-              error={thumbnailError}
-              label="Thumbnail*"
-              file={rawThumbnail}
-              handleChange={handleImageUpload}
-              types={["jpeg", "jpg", "png", "gif", "webp"]}
-            />
+      <div className="flex justify-center ">
+        <div className="flex justify-center mx-auto max-w-[90ch] w-full">
+          <Editor onInitialize={(instance) => (editorRef.current = instance)} />
+        </div>
+        <div className="max-w-xs p-5 bg-white rounded-lg shadow-lg dark:bg-gray-700">
+          <div className="sticky top-[6rem]">
+            <div className="flex justify-center mt-8 mb-2">
+              <ImageUploader
+                error={thumbnailError}
+                label="Thumbnail*"
+                file={rawThumbnail}
+                handleChange={handleImageUpload}
+                types={["jpeg", "jpg", "png", "gif", "webp"]}
+              />
+            </div>
+            <NewPostForm onSubmit={submit} />
           </div>
         </div>
-        <NewPostForm onSubmit={submit} />
-      </Container>
+      </div>
+
       <ImageCropModal
         visible={isModalVisible}
         onClose={handleModalClose}
         onCropComplete={handleCrop}
         aspect={16 / 9}
+        imageType={rawThumbnail ? rawThumbnail.type : undefined}
+        imageName={rawThumbnail ? rawThumbnail.name : undefined}
         imageUrl={rawThumbnail ? URL.createObjectURL(rawThumbnail) : undefined}
       />
     </Authenticated>

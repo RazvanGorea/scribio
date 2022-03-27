@@ -7,6 +7,9 @@ import Container from "../components/layout/Container";
 import { useAuth } from "../context/AuthContext";
 import { Post } from "../types/Post.type";
 import UploadAvatarModal from "../components/modals/UploadAvatarModal";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 const Home: NextPage<{ posts?: Post[] }> = ({ posts }) => {
   const router = useRouter();
@@ -29,17 +32,11 @@ const Home: NextPage<{ posts?: Post[] }> = ({ posts }) => {
           {posts?.map((post) => (
             <Card
               key={post._id}
-              thumbnail={{
-                src: post.thumbnail.url,
-                height: post.thumbnail.height,
-                width: post.thumbnail.width,
-                blurDataUrl: post.thumbnail.placeholder,
-              }}
-              authorAvatarUrl="https://pbs.twimg.com/profile_images/1359299696464912384/yF59pRq8_400x400.jpg"
-              author={post.author.username}
+              thumbnail={post.thumbnail}
+              author={post.author}
               title={post.title}
               content="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-              publishedDate="08.01.2022"
+              publishedDate={dayjs(post.createdAt).fromNow()}
               timeToRead={post.timeToRead}
               href={`/posts/${post._id}`}
             />

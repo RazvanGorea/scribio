@@ -9,10 +9,6 @@ const valuesSchema = Yup.object({
   title: Yup.string()
     .required("required")
     .matches(/^[a-zA-Z0-9  !]+$/, "Only alphanumeric characters are allowed!"),
-  minutesToRead: Yup.string()
-    .required("required")
-    .matches(/^[0-9]*$/, "Only numbers are allowed")
-    .max(2, "Length must be at most 2 characters"),
 });
 
 // Infer form values
@@ -31,7 +27,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ onSubmit }) => {
       <Formik
         initialValues={{
           title: "",
-          minutesToRead: "",
         }}
         validationSchema={valuesSchema}
         onSubmit={onSubmit}
@@ -57,22 +52,6 @@ const NewPostForm: React.FC<NewPostFormProps> = ({ onSubmit }) => {
               onBlur={handleBlur}
               value={values.title}
               error={errors.title && touched.title && errors.title}
-              required
-            />
-
-            <Input
-              label="Minutes to read"
-              type="number"
-              placeholder="Ex 10"
-              name="minutesToRead"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.minutesToRead}
-              error={
-                errors.minutesToRead &&
-                touched.minutesToRead &&
-                errors.minutesToRead
-              }
               required
             />
 

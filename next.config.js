@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
+  swcMinify: true, // Faster builds
   images: {
     domains: ["avatars.dicebear.com", "scribio.s3.eu-central-1.amazonaws.com"],
   },

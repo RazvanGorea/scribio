@@ -93,8 +93,9 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
               src={{
                 width: user.avatar.width,
                 height: user.avatar.height,
-                blurDataURL: user.avatar.placeholder,
-                src: finalAvatar
+                placeholder: user.avatar.placeholder,
+                key: user.avatar.key,
+                url: finalAvatar
                   ? URL.createObjectURL(finalAvatar)
                   : user.avatar.url,
               }}

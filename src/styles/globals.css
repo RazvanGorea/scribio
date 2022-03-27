@@ -57,3 +57,11 @@ input[type="number"] {
   @apply dark:bg-gray-600;
   @apply dark:text-white;
 }
+
+.dark {
+  @apply bg-gray-800;
+}
+
+label[for="imageUploader"] {
+  min-width: auto;
+}

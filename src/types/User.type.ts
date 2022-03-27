@@ -6,6 +6,3 @@ export type User = {
   email: string;
   avatar: ImageData;
 };
-
-export type UserWithOptionalAvatar = Partial<Pick<User, "avatar">> &
-  Omit<User, "avatar">;

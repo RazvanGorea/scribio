@@ -1,15 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { ImageData } from "../../types/ImageData.type";
 
 interface AvatarProps {
   href?: string;
-  src: {
-    src: string;
-    width: number;
-    height: number;
-    blurDataURL: string;
-  };
+  src: ImageData;
   size?: number;
 }
 
@@ -22,7 +18,13 @@ const Avatar: React.FC<AvatarProps> = ({ src, href, size = 40 }) => {
       <Image
         objectFit="cover"
         layout="responsive"
-        src={src}
+        src={{
+          height: src.height,
+          width: src.width,
+          src: src.url,
+          blurDataURL: src.placeholder,
+        }}
+        unoptimized
         alt=""
         placeholder="blur"
         className="transition-all rounded-full"

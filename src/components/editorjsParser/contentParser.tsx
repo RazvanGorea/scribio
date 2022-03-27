@@ -2,6 +2,7 @@ import { OutputBlockData, OutputData } from "@editorjs/editorjs";
 import React from "react";
 import Checklist from "./components/Checklist";
 import Code from "./components/Code";
+import Delimiter from "./components/Delimiter";
 import Heading from "./components/Heading";
 import List from "./components/List";
 import Paragraph from "./components/Paragraph";
@@ -73,6 +74,9 @@ const getComponent = (block: OutputBlockData<string, any>) => {
           text={block.data.text}
         />
       );
+
+    case "delimiter":
+      return <Delimiter key={block.id} />;
 
     default:
       return <div key={Math.random()} />;

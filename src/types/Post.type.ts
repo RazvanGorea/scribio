@@ -10,6 +10,7 @@ export type Post = {
   author: {
     _id: string;
     username: string;
+    avatar: ImageData;
   };
   thumbnail: ImageData;
 };

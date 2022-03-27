@@ -1,7 +1,8 @@
 import axios from "axios";
 import config from "../config";
 import client from "./axios";
-import { User, UserWithOptionalAvatar } from "../types/User.type";
+import { User } from "../types/User.type";
+import { ImageData } from "../types/ImageData.type";
 
 interface SuccessMessageResponse {
   message: string;
@@ -23,7 +24,7 @@ interface FinishSignUpProps {
   confirmation_code: string | number;
 }
 
-interface LoginResponse extends UserWithOptionalAvatar {
+interface LoginResponse extends User {
   access_token: string;
   refresh_token: string;
 }
@@ -77,6 +78,7 @@ interface GetProfileResponse {
   username: string;
   email: string;
   _id: string;
+  avatar: ImageData;
 }
 
 export async function getProfile() {

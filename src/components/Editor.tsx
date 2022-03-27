@@ -69,7 +69,7 @@ const Editor: React.FC<EditorProps> = ({ onInitialize }) => {
     >
       <div
         id="editor"
-        className="p-5 bg-white rounded-lg shadow-lg dark:bg-gray-700"
+        className="p-5 bg-white rounded-lg shadow-lg dark:bg-gray-700 max-w-[90ch] w-full"
       />
     </EditorJs>
   );

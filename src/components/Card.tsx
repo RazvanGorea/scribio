@@ -2,26 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import { ImageData } from "../types/ImageData.type";
+import Avatar from "./imageRelated/Avatar";
 
 interface CardProps {
-  thumbnail: {
-    blurDataUrl?: string;
-    width: number;
-    height: number;
-    src: string;
-  };
+  thumbnail: ImageData;
   title: string;
   content: string;
-  author: string;
-  // author: {
-  //   username: string;
-  //   avatar?: {
-  //     width: number;
-  //     height: number;
-  //     src: string;
-  //   };
-  // };
-  authorAvatarUrl: string;
+  author: {
+    _id: string;
+    username: string;
+    avatar: ImageData;
+  };
   publishedDate: string;
   timeToRead: string;
   href: string;
@@ -32,7 +24,6 @@ const Card: React.FC<CardProps> = ({
   title,
   content,
   author,
-  authorAvatarUrl,
   href,
   publishedDate = "20 mars 2029",
   timeToRead,
@@ -55,9 +46,14 @@ const Card: React.FC<CardProps> = ({
             alt="blog photo"
             objectFit="cover"
             placeholder="blur"
-            src={thumbnail}
+            src={{
+              height: thumbnail.height,
+              width: thumbnail.width,
+              src: thumbnail.url,
+              blurDataURL: thumbnail.placeholder,
+            }}
             layout="responsive"
-            blurDataURL={thumbnail.blurDataUrl}
+            blurDataURL={thumbnail.placeholder}
           />
         </div>
         <div className="w-full p-4 bg-white dark:bg-gray-700">
@@ -73,15 +69,9 @@ const Card: React.FC<CardProps> = ({
             </p>
           </div>
           <div className="flex items-center mt-4">
-            <a href="#" className="relative block">
-              <img
-                alt="profil"
-                src={authorAvatarUrl}
-                className="object-cover w-10 h-10 mx-auto rounded-full "
-              />
-            </a>
+            <Avatar src={author.avatar} />
             <div className="flex flex-col justify-between ml-4 text-sm">
-              <p className="text-gray-800 dark:text-white">{author}</p>
+              <p className="text-gray-800 dark:text-white">{author.username}</p>
               <p className="text-gray-400 dark:text-gray-300">
                 {publishedDate} - {timeToRead}
               </p>

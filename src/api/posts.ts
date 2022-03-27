@@ -5,7 +5,6 @@ import client from "./axios";
 
 interface CreatePostProps {
   title: string;
-  minutesToRead: string;
   thumbnail: File;
   content: OutputData;
 }
@@ -13,7 +12,6 @@ interface CreatePostProps {
 export async function createPost(data: CreatePostProps) {
   const formData = new FormData();
   formData.append("title", data.title);
-  formData.append("minutesToRead", data.minutesToRead);
   formData.append("content", JSON.stringify(data.content));
   formData.append("thumbnail", data.thumbnail);
 

@@ -7,7 +7,7 @@ import {
 } from "react";
 import { logOut as apiLogout } from "../api/auth";
 import { clearBearerToken, setNewBearerToken } from "../api/axios";
-import { User, UserWithOptionalAvatar } from "../types/User.type";
+import { User } from "../types/User.type";
 import {
   clearCachedUser,
   getCachedUser,
@@ -17,7 +17,7 @@ import {
 
 type AuthContextType = {
   user: User | null;
-  login: (user: UserWithOptionalAvatar, access_token: string) => void;
+  login: (user: User, access_token: string) => void;
   logout: () => void;
 };
 
@@ -36,37 +36,14 @@ export const useAuth = () => {
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  const login = useCallback(
-    (user: UserWithOptionalAvatar, access_token: string) => {
-      let userWithAvatar: User;
-
-      // If user didn't uploaded an avatar, use a random one
-      if (!user.avatar) {
-        const avatarUrl = `https://avatars.dicebear.com/api/identicon/${user.username}.svg?background=%23ffffff`;
-
-        userWithAvatar = {
-          ...user,
-          avatar: {
-            height: 150,
-            width: 150,
-            key: "",
-            url: avatarUrl,
-            placeholder: avatarUrl,
-          },
-        };
-      } else {
-        userWithAvatar = { ...user, avatar: user.avatar! };
-      }
-
-      // Send access token with all future requests
-      setNewBearerToken(access_token);
-      // Cache user in local storage
-      setCachedUser(userWithAvatar);
-      // Update context state
-      setUser(userWithAvatar);
-    },
-    []
-  );
+  const login = useCallback((user: User, access_token: string) => {
+    // Send access token with all future requests
+    setNewBearerToken(access_token);
+    // Cache user in local storage
+    setCachedUser(user);
+    // Update context state
+    setUser(user);
+  }, []);
 
   const logout = useCallback(() => {
     apiLogout();
