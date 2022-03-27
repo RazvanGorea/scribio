@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import { ImageData } from "../types/ImageData.type";
 import Avatar from "./imageRelated/Avatar";
 
@@ -29,9 +29,18 @@ const Card: React.FC<CardProps> = ({
   timeToRead,
 }) => {
   const router = useRouter();
+  const [isFadeTransitionOn, setFadeTransition] = useState(false);
+  const initTime = Date.now();
 
   const navigate = () => {
     router.push(href);
+  };
+
+  const handleImageLoadComplete = () => {
+    const currentTime = Date.now();
+
+    // Transition image only if image loading time is > 120ms (It is not cached)
+    if (currentTime - initTime > 120) setFadeTransition(true);
   };
 
   return (
@@ -42,10 +51,13 @@ const Card: React.FC<CardProps> = ({
           className="overflow-hidden cursor-pointer max-h-44"
         >
           <Image
-            className="transition-all"
-            alt="blog photo"
+            className={
+              isFadeTransitionOn ? "transition-all" : "transition-none"
+            }
+            alt="blog thumbnail"
             objectFit="cover"
             placeholder="blur"
+            onLoadingComplete={handleImageLoadComplete}
             src={{
               height: thumbnail.height,
               width: thumbnail.width,

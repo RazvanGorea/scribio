@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { ImageData } from "../../types/ImageData.type";
 
 interface AvatarProps {
@@ -10,6 +10,16 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ src, href, size = 40 }) => {
+  const [isFadeTransitionOn, setFadeTransition] = useState(false);
+  const initTime = Date.now();
+
+  const handleImageLoadComplete = () => {
+    const currentTime = Date.now();
+
+    // Transition image only if image loading time is > 120ms (It is not cached)
+    if (currentTime - initTime > 120) setFadeTransition(true);
+  };
+
   const avatar = (
     <div
       className="overflow-hidden rounded-full shadow "
@@ -24,10 +34,11 @@ const Avatar: React.FC<AvatarProps> = ({ src, href, size = 40 }) => {
           src: src.url,
           blurDataURL: src.placeholder,
         }}
+        onLoadingComplete={handleImageLoadComplete}
         unoptimized
         alt=""
         placeholder="blur"
-        className="transition-all rounded-full"
+        className={`rounded-full `}
       />
     </div>
   );
