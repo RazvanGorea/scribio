@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../api/posts";
@@ -11,7 +11,11 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
-const Home: NextPage<{ posts?: Post[] }> = ({ posts }) => {
+interface HomeProps {
+  posts: Post[];
+}
+
+const Home: NextPage<HomeProps> = ({ posts }) => {
   const router = useRouter();
 
   const { user } = useAuth();
@@ -58,13 +62,23 @@ const Home: NextPage<{ posts?: Post[] }> = ({ posts }) => {
   );
 };
 
-Home.getInitialProps = async () => {
-  try {
-    const posts = await getAllPosts();
-    return { posts: posts };
-  } catch (error) {
-    return {};
-  }
+export const getServerSideProps: GetServerSideProps<HomeProps> = async (
+  context
+) => {
+  const posts = await getAllPosts();
+
+  return {
+    props: { posts },
+  };
 };
+
+// export const getStaticProps: GetStaticProps<HomeProps> = async (context) => {
+//   const posts = await getAllPosts();
+
+//   // Pass post data to the page via props
+//   return {
+//     props: { posts },
+//   };
+// };
 
 export default Home;

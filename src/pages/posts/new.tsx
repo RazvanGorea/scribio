@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
+import { revalidatePage } from "../../api/global";
 import { createPost } from "../../api/posts";
 import Authenticated from "../../components/Authenticated";
 import { EditorCore } from "../../components/Editor";
@@ -43,8 +44,14 @@ const NewPost: NextPage = () => {
         content: data,
       });
 
+      // Revalidate the main page
+      const info = await revalidatePage("/");
+      console.log("Revalidation state: ", info);
+
       // console.log(res);
       setSubmitting(false);
+
+      // Redirect to created post
       router.push(`/posts/${res.postId}`);
     } catch (error: any) {
       console.log(error.response.data);

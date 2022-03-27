@@ -50,9 +50,6 @@ export const getStaticProps: GetStaticProps<PostProps, Params> = async (
   // Pass post data to the page via props
   return {
     props: { post },
-    // Re-generate the post at most once per second
-    // if a request comes in
-    revalidate: 1,
   };
 };
 
