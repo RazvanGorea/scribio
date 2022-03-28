@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";
+import Image from "../../Image";
 import { ImageData } from "../../../types/ImageData.type";
 
 interface ImageProps {
@@ -25,7 +25,6 @@ const PostImage: React.FC<ImageProps> = ({
       }}
       alt=""
       placeholder="blur"
-      className="transition-all duration-75"
       layout="responsive"
     />
   );
