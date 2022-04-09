@@ -10,7 +10,7 @@ interface PostProps {
 }
 
 const Post: NextPage<PostProps> = ({ post }) => {
-  console.log(post);
+  // console.log(post);
 
   const content = useMemo(() => {
     if (post) return contentParser(post.content);

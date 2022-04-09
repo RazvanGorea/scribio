@@ -44,10 +44,6 @@ const NewPost: NextPage = () => {
         content: data,
       });
 
-      // Revalidate the main page
-      const info = await revalidatePage("/");
-      console.log("Revalidation state: ", info);
-
       // console.log(res);
       setSubmitting(false);
 
