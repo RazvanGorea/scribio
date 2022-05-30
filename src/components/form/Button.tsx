@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import Link from "next/link";
 import Spinner from "../Spinner";
 
@@ -65,4 +65,4 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-export default memo(Button);
+export default Button;

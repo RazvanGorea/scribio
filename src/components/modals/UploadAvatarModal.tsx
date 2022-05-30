@@ -5,7 +5,7 @@ import Avatar from "../imageRelated/Avatar";
 import Modal from "../layout/Modal";
 import { FiEdit } from "react-icons/fi";
 import ImageCropModal from "./ImageCropModal";
-import { updateAvatar } from "../../api/users";
+import { updateAvatar } from "../../api/profile";
 import { User } from "../../types/User.type";
 
 interface UploadAvatarModalProps {
@@ -64,7 +64,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
       if (!finalAvatar) return;
       setLoading(true);
 
-      const res = await updateAvatar(user._id, finalAvatar);
+      const res = await updateAvatar(finalAvatar);
       console.log(res);
       setLoading(false);
     } catch (error: any) {

@@ -54,9 +54,11 @@ const Header: React.FC<HeaderProps> = () => {
               shape="square"
             />
             {user && (
-              <div>
-                <Avatar src={user.avatar} />
-              </div>
+              <Link href={`profile/${user._id}`}>
+                <a>
+                  <Avatar src={user.avatar} />
+                </a>
+              </Link>
             )}
             <Unauthenticated>
               <Button sm href="/logIn">

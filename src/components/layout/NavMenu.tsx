@@ -4,7 +4,19 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import IconButton from "../form/IconButton";
 import NavMenuItem from "../NavMenuItem";
 import { IoMdExit } from "react-icons/io";
+import {
+  AiOutlineHome,
+  AiOutlineClockCircle,
+  AiOutlineLike,
+} from "react-icons/ai";
+import {
+  MdOutlineSubscriptions,
+  MdHistory,
+  MdOutlineLibraryBooks,
+} from "react-icons/md";
+import { BiLibrary } from "react-icons/bi";
 import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "next/router";
 
 interface NavMenuProps {
   visible: boolean;
@@ -14,9 +26,11 @@ interface NavMenuProps {
 const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
   const { logout } = useAuth();
 
-  const handleClick = (c?: () => void) => {
-    if (c) c();
-    onClose();
+  const router = useRouter();
+
+  const navigateHome = (path: string) => {
+    onClose(); // Close menu
+    router.push(path); // Navigate to path
   };
 
   return (
@@ -30,7 +44,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
           <IconButton icon={GiHamburgerMenu} onClick={onClose} />
           <Link href="/">
             <a
-              onClick={() => handleClick()}
+              onClick={() => navigateHome("/")}
               className="text-3xl text-gray-500 select-none hover:text-black dark:hover:text-white dark:text-gray-200"
             >
               Scribio
@@ -40,9 +54,47 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
         <nav>
           <ul>
             <NavMenuItem
+              icon={AiOutlineHome}
+              text="Home"
+              onClick={() => navigateHome("/")}
+            />
+            <NavMenuItem
+              icon={MdOutlineSubscriptions}
+              text="Subscriptions"
+              onClick={() => navigateHome("/")}
+            />
+            <NavMenuItem
+              icon={BiLibrary}
+              text="Library"
+              onClick={() => navigateHome("/")}
+            />
+            <NavMenuItem
+              icon={MdHistory}
+              text="History"
+              onClick={() => navigateHome("/history")}
+            />
+            <NavMenuItem
+              icon={MdOutlineLibraryBooks}
+              text="Your posts"
+              onClick={() => navigateHome("/")}
+            />
+            <NavMenuItem
+              icon={AiOutlineClockCircle}
+              text="Read later"
+              onClick={() => navigateHome("/")}
+            />
+            <NavMenuItem
+              icon={AiOutlineLike}
+              text="Liked"
+              onClick={() => navigateHome("/")}
+            />
+            <NavMenuItem
               icon={IoMdExit}
-              text="Log out"
-              onClick={() => handleClick(logout)}
+              text="Log Out"
+              onClick={() => {
+                onClose();
+                logout();
+              }}
             />
           </ul>
         </nav>

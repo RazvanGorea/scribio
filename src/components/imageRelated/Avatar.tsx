@@ -7,13 +7,15 @@ interface AvatarProps {
   href?: string;
   src: ImageData;
   size?: number;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ src, href, size = 40 }) => {
+const Avatar: React.FC<AvatarProps> = ({ src, href, size = 40, onClick }) => {
   const avatar = (
     <div
       className="overflow-hidden rounded-full shadow "
       style={{ width: size }}
+      onClick={onClick}
     >
       <Image
         objectFit="cover"

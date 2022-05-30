@@ -8,7 +8,7 @@ import Avatar from "./imageRelated/Avatar";
 interface CardProps {
   thumbnail: ImageData;
   title: string;
-  content: string;
+  previewContent: string;
   author: {
     _id: string;
     username: string;
@@ -22,7 +22,7 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({
   thumbnail,
   title,
-  content,
+  previewContent,
   author,
   href,
   publishedDate = "20 mars 2029",
@@ -35,8 +35,8 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg shadow-lg mb-7 h-90 w-60 md:w-80">
-      <div className="block w-full h-full">
+    <div className="overflow-hidden rounded-lg shadow-lg mb-7 h-90">
+      <div className="block w-full h-full bg-white dark:bg-gray-700">
         <div
           onClick={navigate}
           className="overflow-hidden cursor-pointer max-h-44"
@@ -59,12 +59,12 @@ const Card: React.FC<CardProps> = ({
           {/* <p className="font-medium text-indigo-500 text-md">Article</p> */}
           <div onClick={navigate} className="cursor-pointer">
             <Link href={href}>
-              <a className="block mb-2 text-xl font-medium text-gray-800 dark:text-white">
+              <a className="block mb-2 text-xl font-medium text-gray-800 dark:text-white line-clamp-1">
                 {title}
               </a>
             </Link>
-            <p className="font-light text-gray-400 dark:text-gray-300 text-md">
-              {content}
+            <p className="font-light leading-6 min-h-[6rem] text-gray-400 dark:text-gray-300 text-md line-clamp-4">
+              {previewContent}
             </p>
           </div>
           <div className="flex items-center mt-4">

@@ -14,3 +14,17 @@ export type Post = {
   };
   thumbnail: ImageData;
 };
+
+export type PostPreview = {
+  _id: string;
+  title: string;
+  createdAt: number;
+  timeToRead: string;
+  author: {
+    _id: string;
+    username: string;
+    avatar: ImageData;
+  };
+  thumbnail: ImageData;
+  previewContent: string;
+};

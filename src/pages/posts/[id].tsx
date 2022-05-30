@@ -1,7 +1,8 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { getAllPostsIds, getPostById } from "../../api/posts";
+import { addToHistory } from "../../api/profile";
 import contentParser from "../../components/editorjsParser/contentParser";
 import { Post as PostType } from "../../types/Post.type";
 
@@ -10,7 +11,12 @@ interface PostProps {
 }
 
 const Post: NextPage<PostProps> = ({ post }) => {
-  // console.log(post);
+  // Add to history
+  useEffect(() => {
+    if (post?._id) {
+      addToHistory(post._id);
+    }
+  }, [post?._id]);
 
   const content = useMemo(() => {
     if (post) return contentParser(post.content);

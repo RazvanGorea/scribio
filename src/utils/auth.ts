@@ -1,6 +1,7 @@
-import { getProfile, refreshAccessToken } from "../api/auth";
+import { refreshAccessToken } from "../api/auth";
 import { setNewBearerToken } from "../api/axios";
 import { User } from "../types/User.type";
+import { getProfile } from "../api/profile";
 
 // Check if code runs client side
 const isClient = typeof window !== "undefined";

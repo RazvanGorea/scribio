@@ -29,6 +29,16 @@
     @apply font-semibold;
     @apply dark:text-white;
   }
+  h6 {
+    @apply text-lg;
+    @apply font-semibold;
+    @apply dark:text-white;
+  }
+  p,
+  span {
+    @apply text-black;
+    @apply dark:text-white;
+  }
 }
 
 /* Hide numeric input arrows */
@@ -64,4 +74,12 @@ input[type="number"] {
 
 label[for="imageUploader"] {
   min-width: auto;
+}
+
+/* post preview card */
+@media (min-width: 400px) {
+  .post-preview-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
 }

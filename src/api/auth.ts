@@ -74,18 +74,6 @@ export async function refreshAccessToken() {
   return res.data.access_token;
 }
 
-interface GetProfileResponse {
-  username: string;
-  email: string;
-  _id: string;
-  avatar: ImageData;
-}
-
-export async function getProfile() {
-  const res = await client.get<GetProfileResponse>("/auth/profile");
-  return res.data;
-}
-
 export async function initResetPassword(data: { email: string }) {
   const res = await await client.post<SuccessMessageResponse>(
     "/auth/initPasswordReset",

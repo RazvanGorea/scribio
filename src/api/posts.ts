@@ -1,5 +1,5 @@
 import { OutputData } from "@editorjs/editorjs";
-import { Post } from "../types/Post.type";
+import { Post, PostPreview } from "../types/Post.type";
 import { ImageData } from "../types/ImageData.type";
 import client from "./axios";
 
@@ -24,6 +24,11 @@ export async function createPost(data: CreatePostProps) {
 
 export async function getAllPosts() {
   const res = await client.get<Post[]>("/posts");
+  return res.data;
+}
+
+export async function getRecentPosts() {
+  const res = await client.get<PostPreview[]>("/posts/recent");
   return res.data;
 }
 
