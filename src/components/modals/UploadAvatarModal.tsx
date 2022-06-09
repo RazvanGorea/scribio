@@ -6,18 +6,18 @@ import Modal from "../layout/Modal";
 import { FiEdit } from "react-icons/fi";
 import ImageCropModal from "./ImageCropModal";
 import { updateAvatar } from "../../api/profile";
-import { User } from "../../types/User.type";
+import { ImageData } from "../../types/ImageData.type";
 
 interface UploadAvatarModalProps {
   visible: boolean;
   onClose: () => void;
-  user: User;
+  userAvatar: ImageData;
 }
 
 const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
   visible,
   onClose,
-  user,
+  userAvatar,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [rawAvatar, setRawAvatar] = useState<File | null>(null);
@@ -91,13 +91,13 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
             <Avatar
               size={150}
               src={{
-                width: user.avatar.width,
-                height: user.avatar.height,
-                placeholder: user.avatar.placeholder,
-                key: user.avatar.key,
+                width: userAvatar.width,
+                height: userAvatar.height,
+                placeholder: userAvatar.placeholder,
+                key: userAvatar.key,
                 url: finalAvatar
                   ? URL.createObjectURL(finalAvatar)
-                  : user.avatar.url,
+                  : userAvatar.url,
               }}
             />
             <IconButton

@@ -41,7 +41,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
             // Remove url query
             router.replace("/");
           }}
-          user={user}
+          userAvatar={user.avatar}
         />
       )}
     </>

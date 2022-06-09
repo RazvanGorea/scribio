@@ -54,7 +54,7 @@ const Header: React.FC<HeaderProps> = () => {
               shape="square"
             />
             {user && (
-              <Link href={`profile/${user._id}`}>
+              <Link href={`/profile/${user._id}`}>
                 <a>
                   <Avatar src={user.avatar} />
                 </a>

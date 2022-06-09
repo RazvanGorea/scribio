@@ -1,7 +1,7 @@
 import axios from "axios";
 import config from "../config";
 import client from "./axios";
-import { User } from "../types/User.type";
+import { UserPrivate } from "../types/User.type";
 import { ImageData } from "../types/ImageData.type";
 
 interface SuccessMessageResponse {
@@ -24,7 +24,7 @@ interface FinishSignUpProps {
   confirmation_code: string | number;
 }
 
-interface LoginResponse extends User {
+interface LoginResponse extends UserPrivate {
   access_token: string;
   refresh_token: string;
 }

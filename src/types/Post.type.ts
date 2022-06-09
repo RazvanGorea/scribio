@@ -28,3 +28,11 @@ export type PostPreview = {
   thumbnail: ImageData;
   previewContent: string;
 };
+
+export type PostMetrics = {
+  likes: number;
+  dislikes: number;
+  saves: number;
+  views: number;
+  userAppreciation: "like" | "dislike" | null;
+};

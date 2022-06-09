@@ -60,7 +60,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
             />
             <NavMenuItem
               icon={MdOutlineSubscriptions}
-              text="Subscriptions"
+              text="Follows"
               onClick={() => navigateHome("/")}
             />
             <NavMenuItem

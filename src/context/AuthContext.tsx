@@ -7,7 +7,7 @@ import {
 } from "react";
 import { logOut as apiLogout } from "../api/auth";
 import { clearBearerToken, setNewBearerToken } from "../api/axios";
-import { User } from "../types/User.type";
+import { UserPrivate } from "../types/User.type";
 import {
   clearCachedUser,
   getCachedUser,
@@ -16,13 +16,17 @@ import {
 } from "../utils/auth";
 
 type AuthContextType = {
-  user: User | null;
-  login: (user: User, access_token: string) => void;
+  user: UserPrivate | null;
+  isFinished: boolean;
+  isUserInitialized: boolean;
+  login: (user: UserPrivate, access_token: string) => void;
   logout: () => void;
 };
 
 const authContextDefaultValues: AuthContextType = {
   user: null,
+  isFinished: false,
+  isUserInitialized: false,
   login: () => {},
   logout: () => {},
 };
@@ -34,15 +38,17 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserPrivate | null>(null);
+  const [isFinished, setIsFinished] = useState(false); // Used to check when auth api calls are done
 
-  const login = useCallback((user: User, access_token: string) => {
+  const login = useCallback((user: UserPrivate, access_token: string) => {
     // Send access token with all future requests
     setNewBearerToken(access_token);
     // Cache user in local storage
     setCachedUser(user);
     // Update context state
     setUser(user);
+    setIsFinished(true);
   }, []);
 
   const logout = useCallback(() => {
@@ -50,6 +56,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     clearCachedUser();
     clearBearerToken();
     setUser(null);
+    setIsFinished(true);
   }, []);
 
   useEffect(() => {
@@ -64,6 +71,8 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const value = {
     user,
+    isFinished,
+    isUserInitialized: user && isFinished ? true : false, // Used to check when auth api calls are done and user is logged in
     login,
     logout,
   };

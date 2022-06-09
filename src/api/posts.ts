@@ -1,5 +1,5 @@
 import { OutputData } from "@editorjs/editorjs";
-import { Post, PostPreview } from "../types/Post.type";
+import { Post, PostMetrics, PostPreview } from "../types/Post.type";
 import { ImageData } from "../types/ImageData.type";
 import client from "./axios";
 
@@ -65,8 +65,35 @@ export async function uploadImage(file: File) {
 }
 
 export async function uploadImageByUrl(url: string) {
-  const res = await client.post<UploadImageResponse>("posts/uploadByUrl", {
+  const res = await client.post<UploadImageResponse>("/posts/uploadByUrl", {
     url,
   });
+  return res.data;
+}
+
+export async function likePost(postId: string) {
+  const res = await client.post<"success" | "updated">(`/posts/${postId}/like`);
+  return res.data;
+}
+
+export async function dislikePost(postId: string) {
+  const res = await client.post<"success" | "updated">(
+    `/posts/${postId}/dislike`
+  );
+  return res.data;
+}
+
+export async function registerPostView(postId: string) {
+  const res = await client.post<"success">(`/posts/${postId}/registerView`);
+  return res.data;
+}
+
+export async function getPostMetrics(postId: string) {
+  const res = await client.get<PostMetrics>(`/posts/${postId}/metrics`);
+  return res.data;
+}
+
+export async function deletePostAppreciation(postId: string) {
+  const res = await client.delete<"success">(`/posts/${postId}/appreciation`);
   return res.data;
 }

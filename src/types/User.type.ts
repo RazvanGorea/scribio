@@ -1,8 +1,17 @@
 import { ImageData } from "./ImageData.type";
 
-export type User = {
+export type BasicUser = {
   _id: string;
   username: string;
-  email: string;
   avatar: ImageData;
 };
+
+export interface UserPublicProfile extends BasicUser {
+  description?: string;
+  posts: number;
+  registerDate: number;
+}
+
+export interface UserPrivate extends BasicUser {
+  email: string;
+}

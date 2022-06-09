@@ -1,6 +1,6 @@
 import { refreshAccessToken } from "../api/auth";
 import { setNewBearerToken } from "../api/axios";
-import { User } from "../types/User.type";
+import { UserPrivate } from "../types/User.type";
 import { getProfile } from "../api/profile";
 
 // Check if code runs client side
@@ -20,7 +20,7 @@ export async function initAuth() {
 }
 
 // Save user profile in local storage
-export function setCachedUser(user: User) {
+export function setCachedUser(user: UserPrivate) {
   if (!isClient) return;
 
   window.localStorage.setItem("user", JSON.stringify(user));
@@ -32,7 +32,7 @@ export function getCachedUser() {
 
   const data = window.localStorage.getItem("user");
   if (data) {
-    return JSON.parse(data) as User;
+    return JSON.parse(data) as UserPrivate;
   }
 }
 

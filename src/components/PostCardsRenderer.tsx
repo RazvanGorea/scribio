@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { PostPreview } from "../types/Post.type";
 import Card from "./Card";
 import dayjs from "dayjs";
@@ -35,4 +35,4 @@ const PostCardsRenderer: React.FC<PostCardsRendererProps> = ({
   );
 };
 
-export default PostCardsRenderer;
+export default memo(PostCardsRenderer);

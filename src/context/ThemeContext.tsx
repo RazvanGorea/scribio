@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useLayoutEffect,
-} from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { Themes } from "../types/Themes.type";
 
 // Check if code runs on client

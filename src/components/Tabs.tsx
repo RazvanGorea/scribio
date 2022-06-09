@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { IconType } from "react-icons";
 
 interface TabItem {
@@ -13,7 +13,8 @@ type TabProps = TabItem & {
 
 interface TabsProps {
   items: TabItem[];
-  onChange: (selectedTabIndex: number) => void;
+  onChange: (selectedTabIndex: number, selectedTabText: string) => void;
+  style?: React.CSSProperties;
 }
 
 const getLongestTabTextLength = (items: TabItem[]) => {
@@ -28,23 +29,23 @@ const getLongestTabTextLength = (items: TabItem[]) => {
   return length;
 };
 
-const Tabs: React.FC<TabsProps> = ({ items, onChange }) => {
+const Tabs: React.FC<TabsProps> = ({ items, onChange, style }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabWidthInChars = getLongestTabTextLength(items);
 
-  const handleChange = (index: number) => {
+  const handleChange = (index: number, text: string) => {
     if (index !== activeIndex) {
       setActiveIndex(index);
-      onChange(index);
+      onChange(index, text);
     }
   };
 
   return (
-    <div className="w-fit">
+    <div style={style} className="w-fit">
       <div className="flex">
         {items.map((item, i) => (
           <Tab
-            onClick={() => handleChange(i)}
+            onClick={() => handleChange(i, item.text)}
             key={i}
             text={item.text}
             // Used to equalise all tabs width
@@ -75,4 +76,4 @@ const Tab: React.FC<TabProps> = ({ text, icon, onClick, innerWidth }) => (
   </div>
 );
 
-export default Tabs;
+export default memo(Tabs);

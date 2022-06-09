@@ -35,7 +35,7 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg shadow-lg mb-7 h-90">
+    <div className="overflow-hidden rounded-lg shadow-lg h-90">
       <div className="block w-full h-full bg-white dark:bg-gray-700">
         <div
           onClick={navigate}
@@ -68,9 +68,13 @@ const Card: React.FC<CardProps> = ({
             </p>
           </div>
           <div className="flex items-center mt-4">
-            <Avatar src={author.avatar} />
+            <Avatar href={`/profile/${author._id}`} src={author.avatar} />
             <div className="flex flex-col justify-between ml-4 text-sm">
-              <p className="text-gray-800 dark:text-white">{author.username}</p>
+              <Link href={`/profile/${author._id}`}>
+                <a className="text-gray-800 dark:text-white">
+                  {author.username}
+                </a>
+              </Link>
               <p className="text-gray-400 dark:text-gray-300">
                 {publishedDate} - {timeToRead}
               </p>

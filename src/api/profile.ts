@@ -1,16 +1,10 @@
 import client from "./axios";
 import { ImageData } from "../types/ImageData.type";
 import { HistoryItem } from "../types/HistoryItem.type";
-
-interface GetProfileResponse {
-  username: string;
-  email: string;
-  _id: string;
-  avatar: ImageData;
-}
+import { BasicUser, UserPrivate } from "../types/User.type";
 
 export async function getProfile() {
-  const res = await client.get<GetProfileResponse>("/profile");
+  const res = await client.get<UserPrivate>("/profile");
   return res.data;
 }
 
@@ -22,13 +16,16 @@ export async function updateAvatar(avatar: File) {
   return res.data;
 }
 
-export async function addToHistory(postId: string) {
-  const res = await client.post<string>("/profile/history", { postId });
-  return res.data;
+export interface GetHistoryResponse {
+  page: number;
+  hasMore: boolean;
+  data: HistoryItem[];
 }
 
-export async function getHistory() {
-  const res = await client.get<HistoryItem[]>("/profile/history");
+export async function getHistory(page = 0) {
+  const res = await client.get<GetHistoryResponse>(
+    `/profile/history?p=${page}`
+  );
   return res.data;
 }
 
@@ -39,5 +36,15 @@ export async function clearHistory() {
 
 export async function deleteHistoryItem(historyId: string) {
   const res = await client.delete<string>(`/profile/history/${historyId}`);
+  return res.data;
+}
+
+export async function getFollowings() {
+  const res = await client.post<BasicUser[]>(`profile/followings`);
+  return res.data;
+}
+
+export async function getFollowers() {
+  const res = await client.post<BasicUser[]>(`profile/followers`);
   return res.data;
 }
