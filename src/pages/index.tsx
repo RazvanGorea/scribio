@@ -35,6 +35,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
       </Container>
       {user && (
         <UploadAvatarModal
+          userId={user._id}
           visible={isUploadAvatarModalVisible}
           onClose={() => {
             setUploadAvatarModalVisibility(false);
