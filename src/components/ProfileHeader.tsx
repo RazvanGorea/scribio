@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
-import { FiSettings } from "react-icons/fi";
+import { FiEdit } from "react-icons/fi";
 import Skeleton from "react-loading-skeleton";
 import { ImageData } from "../types/ImageData.type";
 import Button from "./form/Button";
@@ -37,8 +37,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
       </div>
       {isPersonal ? (
-        <Button href="/settings" active={isFollowing} icon={FiSettings}>
-          Settings
+        <Button href="/profile/edit" active={isFollowing} icon={FiEdit}>
+          Edit
         </Button>
       ) : (
         <Button

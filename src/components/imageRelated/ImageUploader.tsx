@@ -21,7 +21,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   return (
     <div>
       {label && <label className="text-black dark:text-white">{label}</label>}
-      <div className="transition-colors bg-white bg-opacity-25 hover:bg-opacity-100 dark:bg-opacity-5 dark:hover:bg-opacity-20">
+      <div className="transition-colors bg-white bg-opacity-25 hover:bg-opacity-100 dark:bg-opacity-5 dark:hover:bg-opacity-20 fileUploaderContainer">
         <FileUploader
           file={file}
           name="imageUploader"

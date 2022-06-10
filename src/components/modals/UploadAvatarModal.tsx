@@ -7,18 +7,25 @@ import { FiEdit } from "react-icons/fi";
 import ImageCropModal from "./ImageCropModal";
 import { updateAvatar } from "../../api/profile";
 import { ImageData } from "../../types/ImageData.type";
+import { revalidatePage } from "../../api/global";
+import { getUserPostsId } from "../../api/users";
+import { useRouter } from "next/router";
 
 interface UploadAvatarModalProps {
   visible: boolean;
   onClose: () => void;
   userAvatar: ImageData;
+  userId: string;
 }
 
 const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
   visible,
   onClose,
   userAvatar,
+  userId,
 }) => {
+  const router = useRouter();
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [rawAvatar, setRawAvatar] = useState<File | null>(null);
   const [finalAvatar, setFinalAvatar] = useState<File | null>(null);
@@ -64,11 +71,21 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
       if (!finalAvatar) return;
       setLoading(true);
 
-      const res = await updateAvatar(finalAvatar);
-      console.log(res);
+      await updateAvatar(finalAvatar);
+
+      const postsId = await getUserPostsId(userId);
+
+      // Revalidate user's posts
+      postsId.forEach((id) => revalidatePage(`posts/${id}`));
+
+      // Revalidate user profile
+      await revalidatePage(`profile/${userId}`);
+
+      // Reload page
+      router.reload();
+
       setLoading(false);
     } catch (error: any) {
-      console.log(error.response.data);
       setLoading(false);
     }
   };
@@ -82,9 +99,9 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
       >
         <div className="flex flex-col items-center w-full pb-2 space-y-4">
           <div className="text-center">
-            <h2>Upload an avatar</h2>
+            <h2>Upload profile image</h2>
             <p className="text-black dark:text-white">
-              Upload an avatar to highlight your identity
+              Upload new profile image to highlight your identity
             </p>
           </div>
           <div className="relative">

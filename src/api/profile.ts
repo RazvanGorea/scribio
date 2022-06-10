@@ -12,7 +12,7 @@ export async function updateAvatar(avatar: File) {
   const formData = new FormData();
   formData.append("avatar", avatar);
 
-  const res = await client.patch<ImageData>(`/profile/avatar`, formData);
+  const res = await client.patch<"success">(`/profile/avatar`, formData);
   return res.data;
 }
 
@@ -46,5 +46,33 @@ export async function getFollowings() {
 
 export async function getFollowers() {
   const res = await client.post<BasicUser[]>(`profile/followers`);
+  return res.data;
+}
+
+export async function updateUsername(newUsername: string) {
+  const res = await client.patch<"success">(`profile/username`, {
+    username: newUsername,
+  });
+  return res.data;
+}
+
+export async function updateDescription(newDescription: string) {
+  const res = await client.patch<"success">(`profile/description`, {
+    description: newDescription,
+  });
+  return res.data;
+}
+
+export async function initEmailUpdate(newEmail: string) {
+  const res = await client.patch<"success">(`profile/email/init`, {
+    email: newEmail,
+  });
+  return res.data;
+}
+
+export async function finishEmailUpdate(confirmationCode: number) {
+  const res = await client.patch<"success">(`profile/email/finish`, {
+    code: confirmationCode,
+  });
   return res.data;
 }

@@ -1,6 +1,7 @@
 import React, { memo, useState } from "react";
 import IconButton from "./IconButton";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import Button from "./Button";
 
 interface InputProps {
   value: string;
@@ -11,6 +12,12 @@ interface InputProps {
   placeholder?: string;
   required?: boolean;
   error?: string | false;
+  rightButton?: {
+    text: string;
+    loading: boolean;
+    disabled: boolean;
+  };
+  onRightButtonClick?: React.MouseEventHandler<HTMLButtonElement>;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   onBlur?: React.FocusEventHandler<HTMLInputElement>;
 }
@@ -24,6 +31,8 @@ const Input: React.FC<InputProps> = ({
   id = name,
   required = false,
   error,
+  rightButton,
+  onRightButtonClick,
   onChange,
   onBlur,
 }) => {
@@ -36,7 +45,11 @@ const Input: React.FC<InputProps> = ({
           {required ? label + "*" : label}
         </label>
       )}
-      <div className="relative flex items-center justify-end w-full">
+      <div
+        className={`${
+          rightButton ? "" : "items-center"
+        } relative flex justify-end w-full`}
+      >
         <input
           className={`${
             type === "password" ? "pr-10" : ""
@@ -48,7 +61,26 @@ const Input: React.FC<InputProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           id={id}
+          style={
+            rightButton
+              ? {
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                  borderRight: 0,
+                }
+              : {}
+          }
         />
+        {rightButton && (
+          <Button
+            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+            disabled={rightButton.disabled}
+            loading={rightButton.loading}
+            onClick={onRightButtonClick}
+          >
+            {rightButton.text}
+          </Button>
+        )}
         {type === "password" && (
           <IconButton
             style={{ position: "absolute", right: 0 }}

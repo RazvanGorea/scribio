@@ -27,6 +27,11 @@ export async function getUserPosts(uid: string) {
   return res.data;
 }
 
+export async function getUserPostsId(uid: string) {
+  const res = await client.get<string[]>(`users/${uid}/posts/id`);
+  return res.data;
+}
+
 export async function getUserFollowersNumber(uid: string) {
   const res = await client.get<number>(`users/${uid}/followers`);
   return res.data;

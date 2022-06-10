@@ -59,9 +59,15 @@ input[type="number"] {
 .ce-settings__button,
 .cdx-settings-button,
 /*react-drag-drop-files styles*/
-.ebdQkY > span {
+.fileUploaderContainer span {
   @apply dark:text-white;
 }
+
+.fileUploaderContainer .file-types {
+  @apply ml-2;
+  max-width: initial !important;
+}
+/**/
 
 .ce-settings--opened {
   @apply dark:bg-gray-600;
