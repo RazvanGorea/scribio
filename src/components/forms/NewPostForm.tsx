@@ -19,14 +19,18 @@ interface NewPostFormProps {
     values: NewPostFormValues,
     helpers: FormikHelpers<NewPostFormValues>
   ) => void;
+  initialValue?: string;
 }
 
-const NewPostForm: React.FC<NewPostFormProps> = ({ onSubmit }) => {
+const NewPostForm: React.FC<NewPostFormProps> = ({
+  onSubmit,
+  initialValue = "",
+}) => {
   return (
     <div className="flex justify-center ">
       <Formik
         initialValues={{
-          title: "",
+          title: initialValue,
         }}
         validationSchema={valuesSchema}
         onSubmit={onSubmit}

@@ -13,6 +13,7 @@ interface ButtonProps {
   sm?: boolean;
   active?: boolean;
   icon?: IconType;
+  color?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
   sm = false,
   active = false,
   icon,
+  color,
 }) => {
   const IconComp = icon;
 
@@ -33,7 +35,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       type={type}
       disabled={disabled || loading}
-      style={style}
+      style={{ ...style, borderColor: color }}
       onClick={onClick}
       className={`relative ${
         sm ? "px-3" : "px-5"
@@ -48,6 +50,7 @@ const Button: React.FC<ButtonProps> = ({
       } disabled:bg-opacity-40 disabled:hover:bg-opacity-40 disabled:active:bg-opacity-40 disabled:bg-slate-600 dark:disabled:bg-opacity-30 dark:disabled:hover:bg-opacity-30 dark:disabled:active:bg-opacity-30 dark:disabled:bg-white disabled:cursor-not-allowed dark:disabled:cursor-not-allowed`}
     >
       <span
+        style={{ color: color }}
         className={`text-black dark:text-white transition-opacity flex items-center ${
           loading ? "opacity-0" : "opacity-100"
         }`}

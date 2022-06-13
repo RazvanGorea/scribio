@@ -20,13 +20,14 @@ export interface EditorCore {
 
 interface EditorProps {
   onInitialize: (instance: EditorCore) => void;
+  defaultValue?: OutputData;
   // data?: {
   //   time: number;
   //   blocks: any[];
   // };
 }
 
-const Editor: React.FC<EditorProps> = ({ onInitialize }) => {
+const Editor: React.FC<EditorProps> = ({ onInitialize, defaultValue }) => {
   return (
     <EditorJs
       onInitialize={onInitialize}
@@ -48,24 +49,28 @@ const Editor: React.FC<EditorProps> = ({ onInitialize }) => {
         },
       }}
       holder="editor"
-      defaultValue={{
-        time: 1556098174501,
-        blocks: [
-          {
-            type: "header",
-            data: {
-              text: "Header",
-              level: 1,
-            },
-          },
-          {
-            type: "paragraph",
-            data: {
-              text: "Some text.",
-            },
-          },
-        ],
-      }}
+      defaultValue={
+        defaultValue
+          ? defaultValue
+          : {
+              time: 1556098174501,
+              blocks: [
+                {
+                  type: "header",
+                  data: {
+                    text: "Header",
+                    level: 1,
+                  },
+                },
+                {
+                  type: "paragraph",
+                  data: {
+                    text: "Some text.",
+                  },
+                },
+              ],
+            }
+      }
     >
       <div
         id="editor"

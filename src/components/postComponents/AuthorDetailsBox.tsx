@@ -1,8 +1,8 @@
 import React from "react";
 import Skeleton from "react-loading-skeleton";
-import { ImageData } from "../types/ImageData.type";
-import Button from "./form/Button";
-import Avatar from "./imageRelated/Avatar";
+import { ImageData } from "../../types/ImageData.type";
+import Button from "../form/Button";
+import Avatar from "../imageRelated/Avatar";
 import { AiOutlineCheck } from "react-icons/ai";
 import Link from "next/link";
 
@@ -30,7 +30,7 @@ const AuthorDetailsBox: React.FC<AuthorDetailsBoxProps> = ({
     followersText = followers + (followers === 1 ? " Follower" : " Followers");
 
   return (
-    <div className="sticky max-w-sm px-5 py-6 bg-white rounded-lg shadow-lg dark:bg-gray-700 h-fit top-16">
+    <div className="sticky max-w-sm px-5 py-6 bg-white rounded-lg shadow-lg dark:bg-gray-700 h-fit top-[4.4rem]">
       <div className="flex">
         <Avatar href={`/profile/${uid}`} src={avatar} size={65} />
         <div className="pl-3">

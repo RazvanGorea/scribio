@@ -1,7 +1,7 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { getAllPosts, getRecentPosts } from "../api/posts";
+import { getRecentPosts } from "../api/posts";
 import Container from "../components/layout/Container";
 import { useAuth } from "../context/AuthContext";
 import { PostPreview } from "../types/Post.type";

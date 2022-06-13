@@ -9,13 +9,13 @@ import {
   getPostById,
   likePost,
   registerPostView,
-} from "../../api/posts";
-import contentParser from "../../components/editorjsParser/contentParser";
-import { Post as PostType, PostMetrics } from "../../types/Post.type";
+} from "../../../api/posts";
+import contentParser from "../../../components/editorjsParser/contentParser";
+import { Post as PostType, PostMetrics } from "../../../types/Post.type";
 import dayjs from "dayjs";
-import AuthorDetailsBox from "../../components/AuthorDetailsBox";
-import PostDetails from "../../components/PostDetails";
-import { useAuth } from "../../context/AuthContext";
+import AuthorDetailsBox from "../../../components/postComponents/AuthorDetailsBox";
+import PostDetails from "../../../components/PostDetails";
+import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/router";
 import {
   followUser,
@@ -23,7 +23,8 @@ import {
   getUserFollowersNumber,
   isFollowing,
   unfollowUser,
-} from "../../api/users";
+} from "../../../api/users";
+import PostControl from "../../../components/postComponents/PostControl";
 
 interface PostProps {
   post?: PostType;
@@ -32,7 +33,7 @@ interface PostProps {
 
 const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   const router = useRouter();
-  const { isUserInitialized } = useAuth();
+  const { isUserInitialized, user } = useAuth();
   const [postAppreciation, setPostAppreciation] = useState<PostMetrics | null>(
     null
   );
@@ -40,6 +41,8 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     isFollowing: boolean;
     followers: number;
   } | null>(null);
+
+  const isPersonal = user?._id === post?.author._id;
 
   const fetchPostDetails = useCallback(async () => {
     if (post) {
@@ -188,15 +191,19 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
         />
         {content}
       </article>
-      <AuthorDetailsBox
-        onFollow={followHandler}
-        uid={post.author._id}
-        avatar={post.author.avatar}
-        isFollowing={authorFollowData?.isFollowing}
-        followers={authorFollowData?.followers}
-        username={post.author.username}
-        userDescription={authorDescription}
-      />
+      {isPersonal ? (
+        <PostControl postId={post._id} onDelete={() => {}} />
+      ) : (
+        <AuthorDetailsBox
+          onFollow={followHandler}
+          uid={post.author._id}
+          avatar={post.author.avatar}
+          isFollowing={authorFollowData?.isFollowing}
+          followers={authorFollowData?.followers}
+          username={post.author.username}
+          userDescription={authorDescription}
+        />
+      )}
     </div>
   );
 };
