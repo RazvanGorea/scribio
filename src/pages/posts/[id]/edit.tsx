@@ -3,7 +3,8 @@ import { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createPost, getPostById } from "../../../api/posts";
+import { revalidatePage } from "../../../api/global";
+import { createPost, getPostById, updatePost } from "../../../api/posts";
 import Authenticated from "../../../components/Authenticated";
 import DotsLoading from "../../../components/DotsLoading";
 import { EditorCore } from "../../../components/Editor";
@@ -14,13 +15,14 @@ import ImageUploader from "../../../components/imageRelated/ImageUploader";
 const Editor = dynamic(import("../../../components/Editor"), { ssr: false });
 // import Container from "../../components/layout/Container";
 import ImageCropModal from "../../../components/modals/ImageCropModal";
+import { useAuth } from "../../../context/AuthContext";
 import { Post } from "../../../types/Post.type";
 
 const EditPost: NextPage = () => {
   const router = useRouter();
+  const { user } = useAuth();
 
   const editorRef = useRef<EditorCore | null>(null);
-  const [thumbnailError, setThumbnailError] = useState("");
   const [rawThumbnail, setRawThumbnail] = useState<File | null>(null);
   const [croppedThumbnail, setCroppedThumbnail] = useState<File | null>(null);
   const [isModalVisible, setModalVisibility] = useState(false);
@@ -44,26 +46,34 @@ const EditPost: NextPage = () => {
     { setSubmitting }: FormikHelpers<NewPostFormValues>
   ) => {
     try {
-      if (!editorRef.current) return;
-
-      if (!croppedThumbnail)
-        return setThumbnailError("Please upload thumbnail!");
+      if (!editorRef.current || !post || !user) return;
 
       // Get editor data
       const data = await editorRef.current.save();
 
-      // Create new post
-      const res = await createPost({
+      console.log({
         title: values.title,
-        thumbnail: croppedThumbnail,
+        thumbnail: croppedThumbnail || undefined,
         content: data,
       });
+
+      // Update post
+      await updatePost(post._id, {
+        title: values.title,
+        thumbnail: croppedThumbnail || undefined,
+        content: data,
+      });
+
+      await Promise.all([
+        revalidatePage(`/profile/${user._id}`),
+        revalidatePage(`/posts/${post._id}`),
+      ]);
 
       // console.log(res);
       setSubmitting(false);
 
       // Redirect to created post
-      router.push(`/posts/${res.postId}`);
+      router.push(`/posts/${post._id}`);
     } catch (error: any) {
       console.log(error.response.data);
       setSubmitting(false);
@@ -102,7 +112,6 @@ const EditPost: NextPage = () => {
             <div className="sticky top-[6rem]">
               <div className="flex justify-center mt-8 mb-2">
                 <ImageUploader
-                  error={thumbnailError}
                   label="Thumbnail*"
                   file={rawThumbnail}
                   handleChange={handleImageUpload}

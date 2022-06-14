@@ -9,6 +9,7 @@ import {
   getPostById,
   likePost,
   registerPostView,
+  deletePost,
 } from "../../../api/posts";
 import contentParser from "../../../components/editorjsParser/contentParser";
 import { Post as PostType, PostMetrics } from "../../../types/Post.type";
@@ -25,6 +26,7 @@ import {
   unfollowUser,
 } from "../../../api/users";
 import PostControl from "../../../components/postComponents/PostControl";
+import { revalidatePage } from "../../../api/global";
 
 interface PostProps {
   post?: PostType;
@@ -167,6 +169,22 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     }
   };
 
+  const deletePostHandler = async () => {
+    try {
+      if (!post || !user) return;
+
+      await deletePost(post._id);
+
+      // Update profile page
+      await revalidatePage(`/profile/${user._id}`);
+
+      // Redirect with full page reload
+      window.location.replace("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const content = useMemo(() => {
     if (post) return contentParser(post.content);
   }, [post]);
@@ -192,7 +210,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
         {content}
       </article>
       {isPersonal ? (
-        <PostControl postId={post._id} onDelete={() => {}} />
+        <PostControl onDelete={deletePostHandler} postId={post._id} />
       ) : (
         <AuthorDetailsBox
           onFollow={followHandler}

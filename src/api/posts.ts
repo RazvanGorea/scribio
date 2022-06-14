@@ -22,6 +22,27 @@ export async function createPost(data: CreatePostProps) {
   return res.data;
 }
 
+interface UpdatePostProps {
+  title: string;
+  thumbnail?: File;
+  content: OutputData;
+}
+
+export async function updatePost(postId: string, data: UpdatePostProps) {
+  const formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("content", JSON.stringify(data.content));
+  if (data.thumbnail) formData.append("thumbnail", data.thumbnail);
+
+  const res = await client.patch<"success">(`/posts/${postId}`, formData);
+  return res.data;
+}
+
+export async function deletePost(postId: string) {
+  const res = await client.delete<"success">(`/posts/${postId}`);
+  return res.data;
+}
+
 export async function getAllPosts() {
   const res = await client.get<Post[]>("/posts");
   return res.data;

@@ -3,6 +3,7 @@ import { NextPage } from "next";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useRef, useState } from "react";
+import { revalidatePage } from "../../api/global";
 import { createPost } from "../../api/posts";
 import Authenticated from "../../components/Authenticated";
 import { EditorCore } from "../../components/Editor";
@@ -13,9 +14,11 @@ import ImageUploader from "../../components/imageRelated/ImageUploader";
 const Editor = dynamic(import("../../components/Editor"), { ssr: false });
 // import Container from "../../components/layout/Container";
 import ImageCropModal from "../../components/modals/ImageCropModal";
+import { useAuth } from "../../context/AuthContext";
 
 const NewPost: NextPage = () => {
   const router = useRouter();
+  const { user } = useAuth();
 
   const editorRef = useRef<EditorCore | null>(null);
   const [thumbnailError, setThumbnailError] = useState("");
@@ -28,7 +31,7 @@ const NewPost: NextPage = () => {
     { setSubmitting }: FormikHelpers<NewPostFormValues>
   ) => {
     try {
-      if (!editorRef.current) return;
+      if (!editorRef.current || !user) return;
 
       if (!croppedThumbnail)
         return setThumbnailError("Please upload thumbnail!");
@@ -42,6 +45,8 @@ const NewPost: NextPage = () => {
         thumbnail: croppedThumbnail,
         content: data,
       });
+
+      await revalidatePage(`/profile/${user._id}`);
 
       // console.log(res);
       setSubmitting(false);
