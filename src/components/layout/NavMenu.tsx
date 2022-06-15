@@ -1,22 +1,18 @@
 import Link from "next/link";
-import React from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import IconButton from "../form/IconButton";
 import NavMenuItem from "../NavMenuItem";
 import { IoMdExit } from "react-icons/io";
-import {
-  AiOutlineHome,
-  AiOutlineClockCircle,
-  AiOutlineLike,
-} from "react-icons/ai";
-import {
-  MdOutlineSubscriptions,
-  MdHistory,
-  MdOutlineLibraryBooks,
-} from "react-icons/md";
+import { AiOutlineHome } from "react-icons/ai";
+import { MdHistory, MdOutlineLibraryBooks, MdTurnedIn } from "react-icons/md";
 import { BiLibrary } from "react-icons/bi";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
+import FollowItem from "../FollowItem";
+import { useTheme } from "../../context/ThemeContext";
+
+import DotsLoading from "../DotsLoading";
 
 interface NavMenuProps {
   visible: boolean;
@@ -24,9 +20,19 @@ interface NavMenuProps {
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
-  const { logout } = useAuth();
+  const { logout, isUserInitialized, followings } = useAuth();
+  const { isDark } = useTheme();
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [navHeight, setNavHeight] = useState("auto");
 
   const router = useRouter();
+
+  useLayoutEffect(() => {
+    if (!headerRef.current) return;
+
+    setNavHeight(`calc( 100% - ${headerRef.current.offsetHeight}px )`);
+  }, []);
 
   const navigateHome = (path: string) => {
     onClose(); // Close menu
@@ -40,7 +46,10 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
           visible ? "translate-x-0" : "-translate-x-full"
         } `}
       >
-        <div className="flex px-6 py-3 space-x-2 border-b-2 dark:border-gray-600">
+        <div
+          ref={headerRef}
+          className="flex px-6 py-3 space-x-2 border-b-2 dark:border-gray-600"
+        >
           <IconButton icon={GiHamburgerMenu} onClick={onClose} />
           <Link href="/">
             <a
@@ -51,27 +60,19 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
             </a>
           </Link>
         </div>
-        <nav>
-          <ul>
+        <nav style={{ height: navHeight }}>
+          <ul className="flex flex-col h-full">
             <NavMenuItem
+              onClick={onClose}
               icon={AiOutlineHome}
               text="Home"
-              onClick={() => navigateHome("/")}
+              href="/"
             />
             <NavMenuItem
-              icon={MdOutlineSubscriptions}
-              text="Follows"
-              onClick={() => navigateHome("/")}
-            />
-            <NavMenuItem
-              icon={BiLibrary}
-              text="Library"
-              onClick={() => navigateHome("/")}
-            />
-            <NavMenuItem
+              onClick={onClose}
               icon={MdHistory}
               text="History"
-              onClick={() => navigateHome("/history")}
+              href="/history"
             />
             <NavMenuItem
               icon={MdOutlineLibraryBooks}
@@ -79,23 +80,43 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
               onClick={() => navigateHome("/")}
             />
             <NavMenuItem
-              icon={AiOutlineClockCircle}
-              text="Read later"
+              icon={MdTurnedIn}
+              text="Saves"
               onClick={() => navigateHome("/")}
             />
-            <NavMenuItem
-              icon={AiOutlineLike}
-              text="Liked"
-              onClick={() => navigateHome("/")}
-            />
-            <NavMenuItem
-              icon={IoMdExit}
-              text="Log Out"
-              onClick={() => {
-                onClose();
-                logout();
-              }}
-            />
+
+            <div>
+              <h6 className="pl-4">
+                {followings && followings.length === 0
+                  ? "No follows"
+                  : "Follows"}
+              </h6>
+              {followings
+                ? followings.map((item) => (
+                    <FollowItem
+                      onClick={onClose}
+                      key={item._id}
+                      avatar={item.avatar}
+                      href={`/profile/${item._id}`}
+                      username={item.username}
+                    />
+                  ))
+                : isUserInitialized && <DotsLoading />}
+            </div>
+            {isUserInitialized && (
+              <NavMenuItem
+                style={{
+                  marginTop: "auto",
+                  borderTop: `2px solid ${isDark ? "#4b5563" : "#e5e7eb"}`,
+                }}
+                icon={IoMdExit}
+                text="Log Out"
+                onClick={() => {
+                  onClose();
+                  logout();
+                }}
+              />
+            )}
           </ul>
         </nav>
       </aside>

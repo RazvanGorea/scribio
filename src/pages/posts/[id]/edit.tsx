@@ -72,8 +72,8 @@ const EditPost: NextPage = () => {
       // console.log(res);
       setSubmitting(false);
 
-      // Redirect to created post
-      router.push(`/posts/${post._id}`);
+      // Redirect to created post with full reload
+      window.location.href = `/posts/${post._id}`;
     } catch (error: any) {
       console.log(error.response.data);
       setSubmitting(false);

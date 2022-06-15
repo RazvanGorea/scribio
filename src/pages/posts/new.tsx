@@ -17,7 +17,6 @@ import ImageCropModal from "../../components/modals/ImageCropModal";
 import { useAuth } from "../../context/AuthContext";
 
 const NewPost: NextPage = () => {
-  const router = useRouter();
   const { user } = useAuth();
 
   const editorRef = useRef<EditorCore | null>(null);
@@ -51,8 +50,8 @@ const NewPost: NextPage = () => {
       // console.log(res);
       setSubmitting(false);
 
-      // Redirect to created post
-      router.push(`/posts/${res.postId}`);
+      // Redirect to created post with full reload
+      window.location.href = `/posts/${res.postId}`;
     } catch (error: any) {
       console.log(error.response.data);
       setSubmitting(false);

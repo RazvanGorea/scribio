@@ -7,6 +7,7 @@ interface NavMenuItemProps {
   text: string;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   href?: string;
+  style?: React.CSSProperties;
 }
 
 const NavMenuItem: React.FC<NavMenuItemProps> = ({
@@ -14,6 +15,7 @@ const NavMenuItem: React.FC<NavMenuItemProps> = ({
   onClick,
   href,
   text,
+  style,
 }) => {
   const IconComp = icon;
 
@@ -28,13 +30,13 @@ const NavMenuItem: React.FC<NavMenuItemProps> = ({
   );
 
   return href ? (
-    <li>
+    <li style={style}>
       <Link href={href}>
         <a>{item}</a>
       </Link>
     </li>
   ) : (
-    <li>{item}</li>
+    <li style={style}>{item}</li>
   );
 };
 

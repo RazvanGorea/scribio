@@ -43,13 +43,14 @@ export async function deletePost(postId: string) {
   return res.data;
 }
 
-export async function getAllPosts() {
-  const res = await client.get<Post[]>("/posts");
-  return res.data;
+export interface GetPostsResponse {
+  page: number;
+  hasMore: boolean;
+  data: PostPreview[];
 }
 
-export async function getRecentPosts() {
-  const res = await client.get<PostPreview[]>("/posts/recent");
+export async function getPosts(page = 0) {
+  const res = await client.get<GetPostsResponse>(`/posts?p=${page}`);
   return res.data;
 }
 

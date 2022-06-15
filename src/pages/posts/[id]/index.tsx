@@ -35,7 +35,7 @@ interface PostProps {
 
 const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   const router = useRouter();
-  const { isUserInitialized, user } = useAuth();
+  const { isUserInitialized, user, fetchFollowings } = useAuth();
   const [postAppreciation, setPostAppreciation] = useState<PostMetrics | null>(
     null
   );
@@ -43,6 +43,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     isFollowing: boolean;
     followers: number;
   } | null>(null);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const isPersonal = user?._id === post?.author._id;
 
@@ -149,7 +150,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     if (!isUserInitialized) return router.push("/logIn");
 
     if (authorFollowData.isFollowing) {
-      unfollowUser(post.author._id);
+      unfollowUser(post.author._id).then(() => fetchFollowings());
       setAuthorFollowData((det) => {
         if (!det) return null;
         return {
@@ -158,7 +159,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
         };
       });
     } else {
-      followUser(post.author._id);
+      followUser(post.author._id).then(() => fetchFollowings());
       setAuthorFollowData((det) => {
         if (!det) return null;
         return {
@@ -172,6 +173,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   const deletePostHandler = async () => {
     try {
       if (!post || !user) return;
+      setIsDeleteLoading(true);
 
       await deletePost(post._id);
 
@@ -182,6 +184,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
       window.location.replace("/");
     } catch (error) {
       console.log(error);
+      setIsDeleteLoading(false);
     }
   };
 
@@ -210,7 +213,11 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
         {content}
       </article>
       {isPersonal ? (
-        <PostControl onDelete={deletePostHandler} postId={post._id} />
+        <PostControl
+          isDeleteLoading={isDeleteLoading}
+          onDelete={deletePostHandler}
+          postId={post._id}
+        />
       ) : (
         <AuthorDetailsBox
           onFollow={followHandler}
@@ -233,7 +240,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: true,
+    fallback: false,
   };
 };
 

@@ -40,12 +40,12 @@ export async function deleteHistoryItem(historyId: string) {
 }
 
 export async function getFollowings() {
-  const res = await client.post<BasicUser[]>(`profile/followings`);
+  const res = await client.get<BasicUser[]>(`profile/followings`);
   return res.data;
 }
 
 export async function getFollowers() {
-  const res = await client.post<BasicUser[]>(`profile/followers`);
+  const res = await client.get<BasicUser[]>(`profile/followers`);
   return res.data;
 }
 

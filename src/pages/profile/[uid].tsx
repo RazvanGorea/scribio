@@ -24,15 +24,16 @@ import * as emptySearchAnim from "../../assets/lottie/emptySearch.json";
 import EmptyComponent from "../../components/EmptyComponent";
 import ProfileHeader from "../../components/ProfileHeader";
 import DropDown from "../../components/form/DropDown";
+import { getPosts, GetPostsResponse } from "../../api/posts";
 
 interface ProfileProps {
   user?: UserPublicProfile;
-  userPosts: PostPreview[];
+  userPosts: GetPostsResponse;
 }
 
 const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   const router = useRouter();
-  const { isUserInitialized, user: authUser } = useAuth();
+  const { isUserInitialized, user: authUser, fetchFollowings } = useAuth();
 
   // Check if current profile belongs to authenticated user
   const isPersonal = user?._id === authUser?._id;
@@ -45,6 +46,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       }
     | undefined
   >();
+  const [posts, setPosts] = useState<GetPostsResponse>(userPosts);
   const [totalViews, setTotalViews] = useState<number | undefined>();
   const [sort, setSort] = useState<string>("Newer first");
 
@@ -81,7 +83,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     if (!isUserInitialized) return router.push("/logIn");
 
     if (followData.isFollowing) {
-      unfollowUser(user._id);
+      unfollowUser(user._id).then(() => fetchFollowings());
       setFollowData((det) => {
         if (!det) return;
         return {
@@ -90,7 +92,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
         };
       });
     } else {
-      followUser(user._id);
+      followUser(user._id).then(() => fetchFollowings());
       setFollowData((det) => {
         if (!det) return;
         return {
@@ -101,16 +103,27 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     }
   };
 
+  const fetchPosts = async () => {
+    const res = await getPosts(posts.page + 1);
+    setPosts((oldData) => ({
+      page: res.page,
+      hasMore: res.hasMore,
+      data: oldData?.data ? [...oldData.data, ...res.data] : res.data,
+    }));
+  };
+
   if (!user) return <div>Loading...</div>;
 
   let display: JSX.Element;
   switch (tab) {
     case "Posts":
       display =
-        userPosts.length > 0 ? (
+        posts.data.length > 0 ? (
           <PostCardsRenderer
             containerStyles={{ paddingTop: "2rem" }}
-            posts={userPosts}
+            posts={posts.data}
+            hasMore={posts.hasMore}
+            onFetchMore={fetchPosts}
           />
         ) : (
           <EmptyComponent
@@ -148,7 +161,9 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       display = (
         <PostCardsRenderer
           containerStyles={{ paddingTop: "2rem" }}
-          posts={userPosts}
+          posts={posts.data}
+          hasMore={posts.hasMore}
+          onFetchMore={fetchPosts}
         />
       );
       break;
@@ -191,7 +206,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: true,
+    fallback: false,
   };
 };
 
