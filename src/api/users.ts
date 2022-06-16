@@ -1,4 +1,5 @@
 import { PostPreview } from "../types/Post.type";
+import { PostSort } from "../types/PostSort.type";
 import { UserPublicProfile } from "../types/User.type";
 import client from "./axios";
 import { GetPostsResponse } from "./posts";
@@ -23,9 +24,13 @@ export async function getAllUserIds() {
   return res.data;
 }
 
-export async function getUserPosts(uid: string, page = 0) {
+export async function getUserPosts(
+  uid: string,
+  page = 0,
+  sort: PostSort | string = "newer"
+) {
   const res = await client.get<GetPostsResponse>(
-    `users/${uid}/posts?p=${page}`
+    `users/${uid}/posts?p=${page}&sort=${sort}`
   );
   return res.data;
 }

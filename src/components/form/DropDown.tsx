@@ -3,30 +3,30 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import Button from "./Button";
 import ClickAwayListener from "react-click-away-listener";
 
+interface Item {
+  text: string;
+  value: string;
+}
 interface DropDownProps {
   emptyText?: string;
-  items: string[];
-  defaultSelect?: string;
-  onSelect?: (itemText: string, itemIndex: number) => void;
+  items: Item[];
+  value: Item;
+  onSelect?: (item: Item, itemIndex: number) => void;
 }
 
 const DropDown: React.FC<DropDownProps> = ({
   emptyText = "Select an option",
-  defaultSelect,
   items,
+  value,
   onSelect,
 }) => {
-  const [selectedItem, setSelectedItem] = useState<string | undefined>(
-    defaultSelect
-  );
   const [open, setOpen] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleSelect = (itemText: string, itemIndex: number) => {
+  const handleSelect = (item: Item, itemIndex: number) => {
     setOpen(false);
-    setSelectedItem(itemText);
-    if (onSelect) onSelect(itemText, itemIndex);
+    if (onSelect) onSelect(item, itemIndex);
   };
 
   const onClickAway = () => {
@@ -37,7 +37,7 @@ const DropDown: React.FC<DropDownProps> = ({
     <ClickAwayListener onClickAway={onClickAway}>
       <div ref={containerRef}>
         <Button style={{ border: 0 }} sm onClick={() => setOpen((val) => !val)}>
-          {selectedItem || emptyText}
+          {value.text || emptyText}
           <MdKeyboardArrowDown
             className={`w-6 h-6 ml-1 transition-transform ${
               open ? "rotate-180" : "rotate-0"
@@ -60,12 +60,12 @@ const DropDown: React.FC<DropDownProps> = ({
           <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
             {open &&
               items.map((item, index) => (
-                <li key={index}>
+                <li key={item.value}>
                   <button
                     onClick={() => handleSelect(item, index)}
                     className="block w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   >
-                    {item}
+                    {item.text}
                   </button>
                 </li>
               ))}

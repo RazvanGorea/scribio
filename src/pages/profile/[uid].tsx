@@ -25,6 +25,8 @@ import EmptyComponent from "../../components/EmptyComponent";
 import ProfileHeader from "../../components/ProfileHeader";
 import DropDown from "../../components/form/DropDown";
 import { getPosts, GetPostsResponse } from "../../api/posts";
+import { PostSort } from "../../types/PostSort.type";
+import DotsLoading from "../../components/DotsLoading";
 
 interface ProfileProps {
   user?: UserPublicProfile;
@@ -48,7 +50,11 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   >();
   const [posts, setPosts] = useState<GetPostsResponse>(userPosts);
   const [totalViews, setTotalViews] = useState<number | undefined>();
-  const [sort, setSort] = useState<string>("Newer first");
+  const [sort, setSort] = useState<{ text: string; value: string }>({
+    text: "Newer first",
+    value: "newer",
+  });
+  const [isSortLoading, setSortLoading] = useState(false);
 
   const fetchUserFollowData = useCallback(async () => {
     if (!user) return;
@@ -103,36 +109,65 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     }
   };
 
-  const fetchPosts = async () => {
-    const res = await getPosts(posts.page + 1);
-    setPosts((oldData) => ({
-      page: res.page,
-      hasMore: res.hasMore,
-      data: oldData?.data ? [...oldData.data, ...res.data] : res.data,
-    }));
-  };
+  const fetchPosts = useCallback(
+    async (cleanFetch = false) => {
+      if (!user) return;
+
+      const res = await getUserPosts(
+        user._id,
+        cleanFetch ? 0 : posts.page + 1,
+        sort.value
+      );
+      if (cleanFetch) {
+        setSortLoading(false);
+        setPosts(res);
+      } else {
+        setPosts((oldData) => ({
+          page: res.page,
+          hasMore: res.hasMore,
+          data: oldData?.data ? [...oldData.data, ...res.data] : res.data,
+        }));
+      }
+    },
+    [posts.page, sort, user]
+  );
+
+  useEffect(() => {
+    setPosts(userPosts);
+    setSort({ text: "Newer first", value: "newer" });
+  }, [userPosts]);
+
+  useEffect(() => {
+    if (isSortLoading && sort) fetchPosts(true);
+  }, [sort, isSortLoading, fetchPosts]);
 
   if (!user) return <div>Loading...</div>;
 
   let display: JSX.Element;
   switch (tab) {
     case "Posts":
-      display =
-        posts.data.length > 0 ? (
-          <PostCardsRenderer
-            containerStyles={{ paddingTop: "2rem" }}
-            posts={posts.data}
-            hasMore={posts.hasMore}
-            onFetchMore={fetchPosts}
-          />
-        ) : (
-          <EmptyComponent
-            animationData={emptySearchAnim}
-            text={
-              isPersonal ? "You have no posts" : `${user.username} has no posts`
-            }
-          />
-        );
+      if (isSortLoading) {
+        display = <DotsLoading style={{ maxWidth: 200, maxHeight: "auto" }} />;
+      } else {
+        display =
+          posts.data.length > 0 ? (
+            <PostCardsRenderer
+              containerStyles={{ paddingTop: "2rem" }}
+              posts={posts.data}
+              hasMore={posts.hasMore}
+              onFetchMore={fetchPosts}
+            />
+          ) : (
+            <EmptyComponent
+              animationData={emptySearchAnim}
+              text={
+                isPersonal
+                  ? "You have no posts"
+                  : `${user.username} has no posts`
+              }
+            />
+          );
+      }
       break;
 
     case "About":
@@ -187,9 +222,16 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
         />
         {(tab === "Posts" || tab === "Series") && (
           <DropDown
-            defaultSelect="Newer first"
-            items={["Newer first", "Older first", "Most popular"]}
-            onSelect={(itemText) => setSort(itemText)}
+            value={sort}
+            items={[
+              { text: "Newer first", value: "newer" },
+              { text: "Older first", value: "older" },
+              { text: "Most popular", value: "popularity" },
+            ]}
+            onSelect={(item) => {
+              setSortLoading(true);
+              setSort(item);
+            }}
           />
         )}
       </div>
