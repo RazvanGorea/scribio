@@ -48,7 +48,7 @@ const Edit: NextPage = () => {
       const ids = await getUserPostsId(user._id);
 
       // Revalidate posts
-      if (ids.length > 0) ids.map((id) => revalidatePage(`/posts/${id}`));
+      if (ids.length > 0) ids.map((id) => revalidatePage(`/post/${id}`));
 
       // Revalidate profile
       revalidatePage(`/profile/${user._id}`);
@@ -68,7 +68,7 @@ const Edit: NextPage = () => {
       const ids = await getUserPostsId(user._id);
 
       // Revalidate posts
-      if (ids.length > 0) ids.map((id) => revalidatePage(`/posts/${id}`));
+      if (ids.length > 0) ids.map((id) => revalidatePage(`/post/${id}`));
 
       // Revalidate profile
       revalidatePage(`/profile/${user._id}`);

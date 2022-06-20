@@ -59,7 +59,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({
         scope="row"
         className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap"
       >
-        <Link href={`/posts/${item.post._id}`}>
+        <Link href={`/post/${item.post._id}`}>
           <a>{item.post.title}</a>
         </Link>
       </th>

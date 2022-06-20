@@ -27,12 +27,16 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
   }, [router, user]);
 
   const fetchPosts = async () => {
-    const res = await getPosts(postsData.page + 1);
-    setPostsData((oldData) => ({
-      page: res.page,
-      hasMore: res.hasMore,
-      data: oldData?.data ? [...oldData.data, ...res.data] : res.data,
-    }));
+    try {
+      const res = await getPosts(postsData.page + 1);
+      setPostsData((oldData) => ({
+        page: res.page,
+        hasMore: res.hasMore,
+        data: oldData?.data ? [...oldData.data, ...res.data] : res.data,
+      }));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

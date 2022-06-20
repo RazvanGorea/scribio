@@ -24,12 +24,16 @@ import * as emptySearchAnim from "../../assets/lottie/emptySearch.json";
 import EmptyComponent from "../../components/EmptyComponent";
 import ProfileHeader from "../../components/ProfileHeader";
 import DropDown from "../../components/form/DropDown";
-import { getPosts, GetPostsResponse } from "../../api/posts";
+import { deletePost, getPosts, GetPostsResponse } from "../../api/posts";
 import { PostSort } from "../../types/PostSort.type";
 import DotsLoading from "../../components/DotsLoading";
+import { FiEdit, FiTrash } from "react-icons/fi";
+import Modal from "../../components/layout/Modal";
+import Button from "../../components/form/Button";
+import { revalidatePage } from "../../api/global";
 
 interface ProfileProps {
-  user?: UserPublicProfile;
+  user: UserPublicProfile;
   userPosts: GetPostsResponse;
 }
 
@@ -55,10 +59,10 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     value: "newer",
   });
   const [isSortLoading, setSortLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<{ postId: string }>();
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const fetchUserFollowData = useCallback(async () => {
-    if (!user) return;
-
     if (isUserInitialized && !isPersonal) {
       const [isFollow, followers] = await Promise.all([
         isFollowing(user._id),
@@ -73,8 +77,6 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   }, [isUserInitialized, user, isPersonal]);
 
   const fetchUserTotalViews = useCallback(async () => {
-    if (!user) return;
-
     const views = await getUserTotalViews(user._id);
     setTotalViews(views);
   }, [user]);
@@ -85,7 +87,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   }, [fetchUserFollowData, fetchUserTotalViews]);
 
   const followHandler = () => {
-    if (!followData || !user) return;
+    if (!followData) return;
     if (!isUserInitialized) return router.push("/logIn");
 
     if (followData.isFollowing) {
@@ -141,7 +143,23 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     if (isSortLoading && sort) fetchPosts(true);
   }, [sort, isSortLoading, fetchPosts]);
 
-  if (!user) return <div>Loading...</div>;
+  const deletePostHandler = async () => {
+    try {
+      if (!confirmDelete) return;
+      setIsDeleteLoading(true);
+
+      await deletePost(confirmDelete.postId);
+
+      // Update profile page
+      await revalidatePage(`/profile/${user._id}`);
+
+      //full page reload
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+      setIsDeleteLoading(false);
+    }
+  };
 
   let display: JSX.Element;
   switch (tab) {
@@ -156,6 +174,20 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
               posts={posts.data}
               hasMore={posts.hasMore}
               onFetchMore={fetchPosts}
+              type={user._id === authUser?._id ? "profile" : "default"}
+              profileCardsMenuOptions={[
+                {
+                  text: "Edit",
+                  icon: FiEdit,
+                  onClick: (postId) => router.push(`/post/${postId}/edit`),
+                },
+                {
+                  text: "Delete",
+                  icon: FiTrash,
+                  color: "red",
+                  onClick: (postId) => setConfirmDelete({ postId }),
+                },
+              ]}
             />
           ) : (
             <EmptyComponent
@@ -199,44 +231,76 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
           posts={posts.data}
           hasMore={posts.hasMore}
           onFetchMore={fetchPosts}
+          type={user._id === authUser?._id ? "profile" : "default"}
+          profileCardsMenuOptions={[
+            {
+              text: "Edit",
+              icon: FiEdit,
+              onClick: (postId) => router.push(`/post/${postId}/edit`),
+            },
+            {
+              text: "Delete",
+              icon: FiTrash,
+              color: "red",
+              onClick: (postId) => setConfirmDelete({ postId }),
+            },
+          ]}
         />
       );
       break;
   }
 
   return (
-    <Container>
-      <ProfileHeader
-        avatar={user.avatar}
-        onFollow={followHandler}
-        username={user.username}
-        followers={followData?.followers}
-        isFollowing={followData?.isFollowing}
-        isPersonal={isPersonal}
-      />
-      <div className="flex items-center justify-between">
-        <Tabs
-          style={{ marginTop: "1rem", marginBottom: "1rem" }}
-          items={[{ text: "Posts" }, { text: "Series" }, { text: "About" }]}
-          onChange={(i, text) => setTab(text)}
+    <>
+      <Container>
+        <ProfileHeader
+          avatar={user.avatar}
+          onFollow={followHandler}
+          username={user.username}
+          followers={followData?.followers}
+          isFollowing={followData?.isFollowing}
+          isPersonal={isPersonal}
         />
-        {(tab === "Posts" || tab === "Series") && (
-          <DropDown
-            value={sort}
-            items={[
-              { text: "Newer first", value: "newer" },
-              { text: "Older first", value: "older" },
-              { text: "Most popular", value: "popularity" },
-            ]}
-            onSelect={(item) => {
-              setSortLoading(true);
-              setSort(item);
-            }}
+        <div className="flex items-center justify-between">
+          <Tabs
+            style={{ marginTop: "1rem", marginBottom: "1rem" }}
+            items={[{ text: "Posts" }, { text: "Series" }, { text: "About" }]}
+            onChange={(i, text) => setTab(text)}
           />
-        )}
-      </div>
-      {display}
-    </Container>
+          {(tab === "Posts" || tab === "Series") && (
+            <DropDown
+              value={sort}
+              items={[
+                { text: "Newer first", value: "newer" },
+                { text: "Older first", value: "older" },
+                { text: "Most popular", value: "popularity" },
+              ]}
+              onSelect={(item) => {
+                setSortLoading(true);
+                setSort(item);
+              }}
+            />
+          )}
+        </div>
+        {display}
+      </Container>
+      <Modal
+        visible={!!confirmDelete}
+        onClose={() => setConfirmDelete(undefined)}
+      >
+        <h2 className="text-center">Are you sure?</h2>
+        <div className="flex justify-center mt-5 space-x-3">
+          <Button onClick={() => setConfirmDelete(undefined)}>Cancel</Button>
+          <Button
+            onClick={deletePostHandler}
+            loading={isDeleteLoading}
+            color="red"
+          >
+            Delete
+          </Button>
+        </div>
+      </Modal>
+    </>
   );
 };
 

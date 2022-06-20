@@ -1,12 +1,14 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   AiOutlineDislike,
   AiOutlineLike,
   AiFillLike,
   AiFillDislike,
 } from "react-icons/ai";
+import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { MdTurnedInNot, MdTurnedIn } from "react-icons/md";
 import Skeleton from "react-loading-skeleton";
+import Button from "./form/Button";
 import IconButton from "./form/IconButton";
 import Spinner from "./Spinner";
 
@@ -18,9 +20,12 @@ interface PostDetailsProps {
   saves?: number;
   views?: number;
   userAppreciation: "like" | "dislike" | null;
-  isSaved: boolean;
+  isSaved?: boolean;
+  isListening?: boolean;
+  onListen?: React.MouseEventHandler<HTMLButtonElement>;
   onLike?: React.MouseEventHandler<HTMLButtonElement>;
   onDislike?: React.MouseEventHandler<HTMLButtonElement>;
+  onSave?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const PostDetails: React.FC<PostDetailsProps> = ({
@@ -31,9 +36,12 @@ const PostDetails: React.FC<PostDetailsProps> = ({
   saves,
   views,
   userAppreciation,
-  isSaved,
+  isSaved = false,
+  isListening = false,
+  onListen,
   onLike,
   onDislike,
+  onSave,
 }) => {
   let viewsText: JSX.Element | string = <Skeleton width={60} />;
   if (views) viewsText = views + (views === 1 ? " view" : " views");
@@ -69,13 +77,20 @@ const PostDetails: React.FC<PostDetailsProps> = ({
         <div className="flex items-center">
           <span className="mr-1">{saves ?? <Spinner size={20} />}</span>
           <IconButton
+            onClick={onSave}
             disabled={typeof saves === "undefined"}
             icon={isSaved ? MdTurnedIn : MdTurnedInNot}
           />
         </div>
+        <Button
+          onClick={onListen}
+          icon={isListening ? BsPauseFill : BsPlayFill}
+        >
+          {isListening ? "Pause" : "Listen"}
+        </Button>
       </div>
     </div>
   );
 };
 
-export default PostDetails;
+export default memo(PostDetails);

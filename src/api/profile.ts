@@ -2,6 +2,7 @@ import client from "./axios";
 import { ImageData } from "../types/ImageData.type";
 import { HistoryItem } from "../types/HistoryItem.type";
 import { BasicUser, UserPrivate } from "../types/User.type";
+import { PostPreview } from "../types/Post.type";
 
 export async function getProfile() {
   const res = await client.get<UserPrivate>("/profile");
@@ -20,6 +21,11 @@ export interface GetHistoryResponse {
   page: number;
   hasMore: boolean;
   data: HistoryItem[];
+}
+
+export async function getSaves() {
+  const res = await client.get<PostPreview[]>(`/profile/saves`);
+  return res.data;
 }
 
 export async function getHistory(page = 0) {

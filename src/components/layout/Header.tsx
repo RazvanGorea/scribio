@@ -44,7 +44,7 @@ const Header: React.FC<HeaderProps> = () => {
               <IconButton
                 icon={AiFillFileAdd}
                 shape="square"
-                href="/posts/new"
+                href="/post/new"
               />
             </Authenticated>
 

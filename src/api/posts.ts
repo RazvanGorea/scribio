@@ -49,8 +49,10 @@ export interface GetPostsResponse {
   data: PostPreview[];
 }
 
-export async function getPosts(page = 0) {
-  const res = await client.get<GetPostsResponse>(`/posts?p=${page}`);
+export async function getPosts(page = 0, searchQuery?: string) {
+  const res = await client.get<GetPostsResponse>(
+    `/posts?p=${page}&search=${searchQuery}`
+  );
   return res.data;
 }
 
@@ -117,5 +119,15 @@ export async function getPostMetrics(postId: string) {
 
 export async function deletePostAppreciation(postId: string) {
   const res = await client.delete<"success">(`/posts/${postId}/appreciation`);
+  return res.data;
+}
+
+export async function savePost(postId: string) {
+  const res = await client.post<"success">(`/posts/${postId}/save`);
+  return res.data;
+}
+
+export async function unsavePost(postId: string) {
+  const res = await client.delete<"success">(`/posts/${postId}/save`);
   return res.data;
 }

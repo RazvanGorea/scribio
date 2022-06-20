@@ -1,12 +1,18 @@
 import { OutputData } from "@editorjs/editorjs";
 import { ImageData } from "./ImageData.type";
 
+export type PostAudio = {
+  url: string;
+  key: string;
+};
+
 export type Post = {
   _id: string;
   title: string;
   createdAt: number;
   timeToRead: string;
   content: OutputData;
+  audio: PostAudio[];
   author: {
     _id: string;
     username: string;
@@ -35,4 +41,5 @@ export type PostMetrics = {
   saves: number;
   views: number;
   userAppreciation: "like" | "dislike" | null;
+  isSaved: boolean;
 };

@@ -1,6 +1,12 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import React, { useMemo, useEffect, useCallback, useState } from "react";
+import React, {
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  useRef,
+} from "react";
 import {
   deletePostAppreciation,
   dislikePost,
@@ -10,6 +16,8 @@ import {
   likePost,
   registerPostView,
   deletePost,
+  unsavePost,
+  savePost,
 } from "../../../api/posts";
 import contentParser from "../../../components/editorjsParser/contentParser";
 import { Post as PostType, PostMetrics } from "../../../types/Post.type";
@@ -29,7 +37,7 @@ import PostControl from "../../../components/postComponents/PostControl";
 import { revalidatePage } from "../../../api/global";
 
 interface PostProps {
-  post?: PostType;
+  post: PostType;
   authorDescription: string;
 }
 
@@ -44,8 +52,16 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     followers: number;
   } | null>(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
 
-  const isPersonal = user?._id === post?.author._id;
+  const audio = useMemo(() => {
+    if (typeof document === "undefined") return;
+    else return new Audio();
+  }, []);
+
+  const currentAudio = useRef(0);
+
+  const isPersonal = user?._id === post.author._id;
 
   const fetchPostDetails = useCallback(async () => {
     if (post) {
@@ -55,8 +71,6 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   }, [post]);
 
   const fetchAuthorFollowData = useCallback(async () => {
-    if (!post) return;
-
     if (isUserInitialized) {
       const [isFollow, followers] = await Promise.all([
         isFollowing(post.author._id),
@@ -79,7 +93,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   }, [post, isUserInitialized, fetchPostDetails, fetchAuthorFollowData]);
 
   const onLike = () => {
-    if (!postAppreciation || !post) return;
+    if (!postAppreciation) return;
 
     if (!isUserInitialized) return router.push("/logIn");
 
@@ -110,7 +124,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   };
 
   const onDislike = () => {
-    if (!postAppreciation || !post) return;
+    if (!postAppreciation) return;
 
     if (!isUserInitialized) return router.push("/logIn");
 
@@ -146,7 +160,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
   };
 
   const followHandler = () => {
-    if (!authorFollowData || !post) return;
+    if (!authorFollowData) return;
     if (!isUserInitialized) return router.push("/logIn");
 
     if (authorFollowData.isFollowing) {
@@ -172,7 +186,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
 
   const deletePostHandler = async () => {
     try {
-      if (!post || !user) return;
+      if (!user) return;
       setIsDeleteLoading(true);
 
       await deletePost(post._id);
@@ -188,11 +202,61 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     }
   };
 
+  const savePostHandler = () => {
+    if (!postAppreciation) return;
+    if (!isUserInitialized) return router.push("/logIn");
+
+    if (postAppreciation.isSaved) {
+      unsavePost(post._id);
+      setPostAppreciation((appr) => {
+        if (!appr) return null;
+        return {
+          ...appr,
+          isSaved: false,
+          saves: appr.saves - 1,
+        };
+      });
+    } else {
+      savePost(post._id);
+      setPostAppreciation((appr) => {
+        if (!appr) return null;
+        return {
+          ...appr,
+          isSaved: true,
+          saves: appr.saves + 1,
+        };
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!audio) return;
+    audio.src = post.audio[currentAudio.current].url;
+
+    audio.addEventListener("ended", () => {
+      if (currentAudio.current < post.audio.length) {
+        audio.src = post.audio[currentAudio.current + 1].url;
+        audio.play();
+        currentAudio.current++;
+      } else setIsListening(false);
+    });
+  }, [audio, post.audio]);
+
+  const listen = () => {
+    if (!audio) return;
+
+    if (isListening) {
+      audio.pause();
+      setIsListening(false);
+    } else {
+      audio.play();
+      setIsListening(true);
+    }
+  };
+
   const content = useMemo(() => {
     if (post) return contentParser(post.content);
   }, [post]);
-
-  if (!post) return <div>Loading...</div>;
 
   return (
     <div className="flex justify-around px-3">
@@ -201,13 +265,16 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
         <PostDetails
           onLike={onLike}
           onDislike={onDislike}
+          onSave={savePostHandler}
+          onListen={listen}
+          isListening={isListening}
           createdAt={dayjs(post.createdAt).format("MMM DD")}
           dislikes={postAppreciation?.dislikes}
           likes={postAppreciation?.likes}
           saves={postAppreciation?.saves}
           views={postAppreciation?.views}
           userAppreciation={postAppreciation?.userAppreciation || null}
-          isSaved={false}
+          isSaved={postAppreciation?.isSaved}
           timeToRead={post.timeToRead}
         />
         {content}

@@ -62,6 +62,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     clearCachedUser();
     clearBearerToken();
     setUser(null);
+    setFollowings(null);
     setIsFinished(true);
   }, []);
 

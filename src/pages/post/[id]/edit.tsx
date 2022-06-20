@@ -66,14 +66,14 @@ const EditPost: NextPage = () => {
 
       await Promise.all([
         revalidatePage(`/profile/${user._id}`),
-        revalidatePage(`/posts/${post._id}`),
+        revalidatePage(`/post/${post._id}`),
       ]);
 
       // console.log(res);
       setSubmitting(false);
 
       // Redirect to created post with full reload
-      window.location.href = `/posts/${post._id}`;
+      window.location.href = `/post/${post._id}`;
     } catch (error: any) {
       console.log(error.response.data);
       setSubmitting(false);

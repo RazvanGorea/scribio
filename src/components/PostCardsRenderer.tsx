@@ -5,13 +5,26 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import DotsLoading from "./DotsLoading";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { MenuOption } from "./OptionsMenu";
 dayjs.extend(relativeTime);
+
+type Modify<T, R> = Omit<T, keyof R> & R;
+
+type MenuOptionType = Modify<
+  MenuOption,
+  {
+    onClick?: (postId: string) => void;
+  }
+>;
 
 interface PostCardsRendererProps {
   posts: PostPreview[];
   containerStyles?: React.CSSProperties;
   hasMore?: boolean;
-  onFetchMore?: () => {};
+  onFetchMore?: () => void;
+  type?: "saves" | "profile" | "default";
+  profileCardsMenuOptions?: MenuOptionType[];
+  onUnsave?: (postId: string) => void;
 }
 
 const PostCardsRenderer: React.FC<PostCardsRendererProps> = ({
@@ -19,6 +32,9 @@ const PostCardsRenderer: React.FC<PostCardsRendererProps> = ({
   containerStyles,
   hasMore,
   onFetchMore,
+  type = "default",
+  profileCardsMenuOptions,
+  onUnsave,
 }) => {
   return (
     <InfiniteScroll
@@ -41,7 +57,17 @@ const PostCardsRenderer: React.FC<PostCardsRendererProps> = ({
             previewContent={post.previewContent}
             publishedDate={dayjs(post.createdAt).fromNow()}
             timeToRead={post.timeToRead}
-            href={`/posts/${post._id}`}
+            href={`/post/${post._id}`}
+            type={type}
+            onUnsave={() => onUnsave && onUnsave(post._id)}
+            menuOptions={
+              type === "profile"
+                ? profileCardsMenuOptions?.map((option) => ({
+                    ...option,
+                    onClick: () => option.onClick && option.onClick(post._id),
+                  }))
+                : undefined
+            }
           />
         ))}
       </div>

@@ -45,13 +45,16 @@ const NewPost: NextPage = () => {
         content: data,
       });
 
-      await revalidatePage(`/profile/${user._id}`);
+      await Promise.all([
+        revalidatePage(`/profile/${user._id}`),
+        revalidatePage(`/post/${res.postId}`),
+      ]);
 
       // console.log(res);
       setSubmitting(false);
 
       // Redirect to created post with full reload
-      window.location.href = `/posts/${res.postId}`;
+      window.location.href = `/post/${res.postId}`;
     } catch (error: any) {
       console.log(error.response.data);
       setSubmitting(false);

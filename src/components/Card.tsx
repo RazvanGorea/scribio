@@ -1,9 +1,12 @@
 import Image from "../components/Image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { memo, useState } from "react";
 import { ImageData } from "../types/ImageData.type";
 import Avatar from "./imageRelated/Avatar";
+import IconButton from "./form/IconButton";
+import { MdTurnedIn } from "react-icons/md";
+import OptionsMenu, { MenuOption } from "./OptionsMenu";
 
 interface CardProps {
   thumbnail: ImageData;
@@ -17,6 +20,9 @@ interface CardProps {
   publishedDate: string;
   timeToRead: string;
   href: string;
+  type?: "saves" | "profile" | "default";
+  menuOptions?: MenuOption[];
+  onUnsave?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -27,6 +33,9 @@ const Card: React.FC<CardProps> = ({
   href,
   publishedDate = "20 mars 2029",
   timeToRead,
+  type = "default",
+  menuOptions,
+  onUnsave,
 }) => {
   const router = useRouter();
 
@@ -67,18 +76,26 @@ const Card: React.FC<CardProps> = ({
               {previewContent}
             </p>
           </div>
-          <div className="flex items-center mt-4">
-            <Avatar href={`/profile/${author._id}`} src={author.avatar} />
-            <div className="flex flex-col justify-between ml-4 text-sm">
-              <Link href={`/profile/${author._id}`}>
-                <a className="text-gray-800 dark:text-white">
-                  {author.username}
-                </a>
-              </Link>
-              <p className="text-gray-400 dark:text-gray-300">
-                {publishedDate} - {timeToRead}
-              </p>
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center">
+              <Avatar href={`/profile/${author._id}`} src={author.avatar} />
+              <div className="flex flex-col justify-between ml-4 text-sm">
+                <Link href={`/profile/${author._id}`}>
+                  <a className="text-gray-800 dark:text-white">
+                    {author.username}
+                  </a>
+                </Link>
+                <p className="text-gray-400 dark:text-gray-300">
+                  {publishedDate} - {timeToRead}
+                </p>
+              </div>
             </div>
+            {type === "saves" && (
+              <IconButton onClick={onUnsave} icon={MdTurnedIn} />
+            )}
+            {type === "profile" && menuOptions && (
+              <OptionsMenu items={menuOptions} />
+            )}
           </div>
         </div>
       </div>
@@ -86,4 +103,4 @@ const Card: React.FC<CardProps> = ({
   );
 };
 
-export default Card;
+export default memo(Card);

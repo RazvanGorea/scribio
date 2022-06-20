@@ -5,14 +5,14 @@ import IconButton from "../form/IconButton";
 import NavMenuItem from "../NavMenuItem";
 import { IoMdExit } from "react-icons/io";
 import { AiOutlineHome } from "react-icons/ai";
-import { MdHistory, MdOutlineLibraryBooks, MdTurnedIn } from "react-icons/md";
-import { BiLibrary } from "react-icons/bi";
+import { MdHistory, MdTurnedIn } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
 import FollowItem from "../FollowItem";
 import { useTheme } from "../../context/ThemeContext";
 
 import DotsLoading from "../DotsLoading";
+import { CgProfile } from "react-icons/cg";
 
 interface NavMenuProps {
   visible: boolean;
@@ -20,7 +20,7 @@ interface NavMenuProps {
 }
 
 const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
-  const { logout, isUserInitialized, followings } = useAuth();
+  const { logout, isUserInitialized, followings, user } = useAuth();
   const { isDark } = useTheme();
 
   const headerRef = useRef<HTMLDivElement>(null);
@@ -69,25 +69,29 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
               href="/"
             />
             <NavMenuItem
+              icon={CgProfile}
+              text="Profile"
+              onClick={onClose}
+              href={
+                isUserInitialized && user ? `/profile/${user?._id}` : "/signIn"
+              }
+            />
+            <NavMenuItem
               onClick={onClose}
               icon={MdHistory}
               text="History"
               href="/history"
             />
             <NavMenuItem
-              icon={MdOutlineLibraryBooks}
-              text="Your posts"
-              onClick={() => navigateHome("/")}
-            />
-            <NavMenuItem
               icon={MdTurnedIn}
               text="Saves"
-              onClick={() => navigateHome("/")}
+              onClick={onClose}
+              href="/saves"
             />
 
             <div>
               <h6 className="pl-4">
-                {followings && followings.length === 0
+                {(followings && followings.length === 0) || !isUserInitialized
                   ? "No follows"
                   : "Follows"}
               </h6>
