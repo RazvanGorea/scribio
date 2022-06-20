@@ -5,10 +5,11 @@ import { IconType } from "react-icons";
 interface IconButtonProps {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: React.CSSProperties;
-  href?: string;
+  href?: any;
   shape?: "square" | "circle";
   icon: IconType;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -18,12 +19,14 @@ const IconButton: React.FC<IconButtonProps> = ({
   shape = "circle",
   href,
   disabled = false,
+  type,
 }) => {
   const IconComp = icon;
   const isCircle = shape === "circle";
 
   const button = (
     <button
+      type={type}
       disabled={disabled}
       style={style}
       onClick={onClick}

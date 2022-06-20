@@ -3,14 +3,17 @@ import IconButton from "./form/IconButton";
 import { BiSearch } from "react-icons/bi";
 
 interface SearchBoxProps {
-  onSearch: (searchText: string) => void;
+  onSearch?: (searchText: string) => void;
 }
 
-const SearchBox: React.FC<SearchBoxProps> = ({ onSearch }) => {
+const SearchBox: React.FC<SearchBoxProps> = () => {
   const [value, setValue] = useState("");
 
   return (
-    <div className="flex rounded dark:bg-black bg-slate-300 md:w-96">
+    <form
+      onSubmit={(e) => e.preventDefault()}
+      className="flex rounded dark:bg-black bg-slate-300 md:w-96"
+    >
       <input
         className="w-full pl-3 text-black bg-transparent outline-none dark:text-white"
         placeholder="Search"
@@ -19,11 +22,12 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearch }) => {
         onChange={(e) => setValue(e.target.value)}
       />
       <IconButton
-        onClick={() => onSearch(value)}
+        href={{ pathname: "/search", query: { query: value } }}
         icon={BiSearch}
         shape="square"
+        type="submit"
       />
-    </div>
+    </form>
   );
 };
 

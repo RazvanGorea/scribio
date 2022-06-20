@@ -38,7 +38,8 @@ const Header: React.FC<HeaderProps> = () => {
               </a>
             </Link>
           </div>
-          <SearchBox onSearch={() => {}} />
+          <SearchBox />
+
           <div className="flex items-center space-x-2">
             <Authenticated>
               <IconButton
