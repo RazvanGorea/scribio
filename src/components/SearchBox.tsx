@@ -11,10 +11,12 @@ const SearchBox: React.FC<SearchBoxProps> = () => {
 
   return (
     <form
+      autoComplete="off"
       onSubmit={(e) => e.preventDefault()}
       className="flex rounded dark:bg-black bg-slate-300 md:w-96"
     >
       <input
+        autoComplete="off"
         className="w-full pl-3 text-black bg-transparent outline-none dark:text-white"
         placeholder="Search"
         name="search"
@@ -22,7 +24,7 @@ const SearchBox: React.FC<SearchBoxProps> = () => {
         onChange={(e) => setValue(e.target.value)}
       />
       <IconButton
-        href={{ pathname: "/search", query: { query: value } }}
+        href={value ? { pathname: "/search", query: { query: value } } : "/"}
         icon={BiSearch}
         shape="square"
         type="submit"

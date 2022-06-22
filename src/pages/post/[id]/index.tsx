@@ -1,12 +1,6 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import React, {
-  useMemo,
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-} from "react";
+import React, { useMemo, useEffect, useCallback, useState } from "react";
 import {
   deletePostAppreciation,
   dislikePost,
@@ -52,14 +46,6 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     followers: number;
   } | null>(null);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-
-  const audio = useMemo(() => {
-    if (typeof document === "undefined") return;
-    else return new Audio();
-  }, []);
-
-  const currentAudio = useRef(0);
 
   const isPersonal = user?._id === post.author._id;
 
@@ -229,30 +215,18 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     }
   };
 
-  useEffect(() => {
-    if (!audio) return;
-    audio.src = post.audio[currentAudio.current].url;
+  // useEffect(() => {
+  //   if (!audio) return;
+  //   audio.src = post.audio[currentAudio.current].url;
 
-    audio.addEventListener("ended", () => {
-      if (currentAudio.current < post.audio.length) {
-        audio.src = post.audio[currentAudio.current + 1].url;
-        audio.play();
-        currentAudio.current++;
-      } else setIsListening(false);
-    });
-  }, [audio, post.audio]);
-
-  const listen = () => {
-    if (!audio) return;
-
-    if (isListening) {
-      audio.pause();
-      setIsListening(false);
-    } else {
-      audio.play();
-      setIsListening(true);
-    }
-  };
+  //   audio.addEventListener("ended", () => {
+  //     if (currentAudio.current < post.audio.length) {
+  //       audio.src = post.audio[currentAudio.current + 1].url;
+  //       audio.play();
+  //       currentAudio.current++;
+  //     } else setIsListening(false);
+  //   });
+  // }, [audio, post.audio]);
 
   const content = useMemo(() => {
     if (post) return contentParser(post.content);
@@ -266,8 +240,6 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
           onLike={onLike}
           onDislike={onDislike}
           onSave={savePostHandler}
-          onListen={listen}
-          isListening={isListening}
           createdAt={dayjs(post.createdAt).format("MMM DD")}
           dislikes={postAppreciation?.dislikes}
           likes={postAppreciation?.likes}
@@ -287,6 +259,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
         />
       ) : (
         <AuthorDetailsBox
+          speechSoundUrl={post.audio.url}
           onFollow={followHandler}
           uid={post.author._id}
           avatar={post.author.avatar}

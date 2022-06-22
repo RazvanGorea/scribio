@@ -5,6 +5,7 @@ import Button from "../form/Button";
 import Avatar from "../imageRelated/Avatar";
 import { AiOutlineCheck } from "react-icons/ai";
 import Link from "next/link";
+import Player from "../Player";
 
 interface AuthorDetailsBoxProps {
   uid: string;
@@ -13,6 +14,7 @@ interface AuthorDetailsBoxProps {
   userDescription: string;
   isFollowing?: boolean;
   followers?: number;
+  speechSoundUrl: string;
   onFollow: React.MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -23,6 +25,7 @@ const AuthorDetailsBox: React.FC<AuthorDetailsBoxProps> = ({
   isFollowing,
   userDescription,
   followers,
+  speechSoundUrl,
   onFollow,
 }) => {
   let followersText: JSX.Element | string = <Skeleton />;
@@ -43,17 +46,21 @@ const AuthorDetailsBox: React.FC<AuthorDetailsBoxProps> = ({
         </div>
       </div>
 
-      <p className="my-3 text-gray-500 line-clamp-6">{userDescription}</p>
-      <Button
-        onClick={onFollow}
-        sm
-        loading={typeof isFollowing === "undefined"}
-        style={{ borderRadius: 30 }}
-        active={isFollowing}
-        icon={isFollowing ? AiOutlineCheck : undefined}
-      >
-        {isFollowing ? "Following" : "Follow"}
-      </Button>
+      <div>
+        <p className="my-3 text-gray-500 line-clamp-6">{userDescription}</p>
+        <Button
+          onClick={onFollow}
+          sm
+          loading={typeof isFollowing === "undefined"}
+          style={{ borderRadius: 30 }}
+          active={isFollowing}
+          icon={isFollowing ? AiOutlineCheck : undefined}
+        >
+          {isFollowing ? "Following" : "Follow"}
+        </Button>
+      </div>
+      <hr className="my-4 border-gray-500 dark:border-gray-400" />
+      <Player soundUrl={speechSoundUrl} />
     </div>
   );
 };

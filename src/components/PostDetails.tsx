@@ -5,10 +5,8 @@ import {
   AiFillLike,
   AiFillDislike,
 } from "react-icons/ai";
-import { BsPauseFill, BsPlayFill } from "react-icons/bs";
 import { MdTurnedInNot, MdTurnedIn } from "react-icons/md";
 import Skeleton from "react-loading-skeleton";
-import Button from "./form/Button";
 import IconButton from "./form/IconButton";
 import Spinner from "./Spinner";
 
@@ -21,8 +19,6 @@ interface PostDetailsProps {
   views?: number;
   userAppreciation: "like" | "dislike" | null;
   isSaved?: boolean;
-  isListening?: boolean;
-  onListen?: React.MouseEventHandler<HTMLButtonElement>;
   onLike?: React.MouseEventHandler<HTMLButtonElement>;
   onDislike?: React.MouseEventHandler<HTMLButtonElement>;
   onSave?: React.MouseEventHandler<HTMLButtonElement>;
@@ -37,8 +33,6 @@ const PostDetails: React.FC<PostDetailsProps> = ({
   views,
   userAppreciation,
   isSaved = false,
-  isListening = false,
-  onListen,
   onLike,
   onDislike,
   onSave,
@@ -82,12 +76,6 @@ const PostDetails: React.FC<PostDetailsProps> = ({
             icon={isSaved ? MdTurnedIn : MdTurnedInNot}
           />
         </div>
-        <Button
-          onClick={onListen}
-          icon={isListening ? BsPauseFill : BsPlayFill}
-        >
-          {isListening ? "Pause" : "Listen"}
-        </Button>
       </div>
     </div>
   );

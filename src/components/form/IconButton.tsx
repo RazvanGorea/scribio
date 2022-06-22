@@ -10,6 +10,7 @@ interface IconButtonProps {
   icon: IconType;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
+  size?: number;
 }
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -20,6 +21,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   href,
   disabled = false,
   type,
+  size = 25,
 }) => {
   const IconComp = icon;
   const isCircle = shape === "circle";
@@ -34,7 +36,7 @@ const IconButton: React.FC<IconButtonProps> = ({
         isCircle ? "rounded-full" : "rounded"
       } cursor-pointer bg-black dark:bg-white dark:bg-opacity-0 dark:hover:bg-opacity-10 p-2 bg-opacity-0 hover:bg-opacity-10 active:bg-opacity-25 dark:active:bg-opacity-25 transition-colors ease-out disabled:cursor-default disabled:bg-opacity-0 disabled:hover:bg-opacity-0 disabled:active:bg-opacity-0`}
     >
-      <IconComp size={25} className="text-black dark:text-white" />
+      <IconComp size={size} className="text-black dark:text-white" />
     </button>
   );
 

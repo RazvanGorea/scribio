@@ -1,7 +1,7 @@
 import { OutputData } from "@editorjs/editorjs";
 import { ImageData } from "./ImageData.type";
 
-export type PostAudio = {
+export type AudioData = {
   url: string;
   key: string;
 };
@@ -12,7 +12,7 @@ export type Post = {
   createdAt: number;
   timeToRead: string;
   content: OutputData;
-  audio: PostAudio[];
+  audio: AudioData;
   author: {
     _id: string;
     username: string;
