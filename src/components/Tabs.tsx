@@ -3,18 +3,15 @@ import { IconType } from "react-icons";
 
 interface TabItem {
   text: string;
+  value: string;
   icon?: IconType;
 }
 
-type TabProps = TabItem & {
-  onClick: () => void;
-  innerWidth: number;
-};
-
 interface TabsProps {
   items: TabItem[];
-  onChange: (selectedTabIndex: number, selectedTabText: string) => void;
-  style?: React.CSSProperties;
+  value: string;
+  fullWidth?: boolean;
+  onChange: (selectedTabValue: string) => void;
 }
 
 const getLongestTabTextLength = (items: TabItem[]) => {
@@ -29,27 +26,33 @@ const getLongestTabTextLength = (items: TabItem[]) => {
   return length;
 };
 
-const Tabs: React.FC<TabsProps> = ({ items, onChange, style }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const tabWidthInChars = getLongestTabTextLength(items);
+const Tabs: React.FC<TabsProps> = ({
+  items,
+  value,
+  fullWidth = false,
+  onChange,
+}) => {
+  const activeIndex = items.findIndex((item) => item.value === value);
+  const minTabTextLength = getLongestTabTextLength(items);
+  const tabWidth = 100 / items.length + "%";
 
-  const handleChange = (index: number, text: string) => {
-    if (index !== activeIndex) {
-      setActiveIndex(index);
-      onChange(index, text);
+  const handleChange = (newVal: string) => {
+    if (value !== newVal) {
+      onChange(newVal);
     }
   };
 
   return (
-    <div style={style} className="w-fit">
-      <div className="flex">
+    <div className={fullWidth ? "w-full" : "w-fit"}>
+      <div className={`flex ${fullWidth ? "w-full" : ""}`}>
         {items.map((item, i) => (
           <Tab
-            onClick={() => handleChange(i, item.text)}
-            key={i}
+            onClick={() => handleChange(item.value)}
+            key={item.value}
             text={item.text}
             // Used to equalise all tabs width
-            innerWidth={tabWidthInChars}
+            width={tabWidth}
+            minTextLength={minTabTextLength}
           />
         ))}
       </div>
@@ -65,12 +68,28 @@ const Tabs: React.FC<TabsProps> = ({ items, onChange, style }) => {
   );
 };
 
-const Tab: React.FC<TabProps> = ({ text, icon, onClick, innerWidth }) => (
+type TabProps = Omit<
+  TabItem & {
+    onClick: () => void;
+    minTextLength: number;
+    width: string | number;
+  },
+  "value"
+>;
+
+const Tab: React.FC<TabProps> = ({
+  text,
+  icon,
+  onClick,
+  minTextLength,
+  width,
+}) => (
   <div
+    style={{ width }}
     onClick={onClick}
     className={`px-3 py-2 transition-colors bg-black bg-opacity-0 rounded cursor-pointer hover:bg-opacity-5 flex justify-center`}
   >
-    <span style={{ width: `${innerWidth}ch` }} className="block text-center">
+    <span style={{ width: minTextLength + "ch" }} className="block text-center">
       {text}
     </span>
   </div>

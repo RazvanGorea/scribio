@@ -46,7 +46,7 @@ const PostCardsRenderer: React.FC<PostCardsRendererProps> = ({
     >
       <div
         style={containerStyles}
-        className="grid grid-cols-1 gap-1 px-3 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4 xl:grid-cols-5 post-preview-card"
+        className="grid grid-cols-1 gap-x-1 gap-y-3 sm:px-3 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 md:gap-4 xl:grid-cols-5 post-preview-card"
       >
         {posts?.map((post) => (
           <Card

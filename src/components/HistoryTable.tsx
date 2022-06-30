@@ -68,7 +68,7 @@ const HistoryTable: React.FC<HistoryTableProps> = ({
           <a>{item.post.author.username}</a>
         </Link>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-6 py-4 min-w-[8.250rem]">
         {dayjs(item.date).format("MMM D, YYYY h:mm A")}
       </td>
       <td className="px-6 py-4">

@@ -41,6 +41,11 @@
   }
 }
 
+/*remove the blue highlight on mobile*/
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
 /* Hide numeric input arrows */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -53,6 +58,21 @@ input[type="number"] {
 }
 
 /* Editor JS styles */
+
+.codex-editor__redactor {
+  padding-bottom: 18rem !important;
+}
+
+@media (max-width: 1024px) {
+  .codex-editor__redactor {
+    padding-bottom: 3rem !important;
+  }
+
+  #editor {
+    padding-bottom: 0 !important;
+  }
+}
+
 .cdx-block,
 .ce-toolbox__button,
 .ce-toolbar__plus,
@@ -86,6 +106,13 @@ label[for="imageUploader"] {
 @media (min-width: 400px) {
   .post-preview-card {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
+    row-gap: 0.75rem;
+  }
+}
+
+@media (max-width: 370px) {
+  /* Post details component */
+  .post-details-appreciations {
+    @apply space-x-0;
   }
 }

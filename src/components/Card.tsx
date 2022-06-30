@@ -44,11 +44,11 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg shadow-lg h-90">
-      <div className="block w-full h-full bg-white dark:bg-gray-700">
+    <div className="rounded-lg shadow-lg h-90">
+      <div className="block w-full h-full bg-white rounded-lg dark:bg-gray-700">
         <div
           onClick={navigate}
-          className="overflow-hidden cursor-pointer max-h-44"
+          className="overflow-hidden rounded-tl-lg rounded-tr-lg cursor-pointer max-h-44"
         >
           <Image
             alt="blog thumbnail"
@@ -64,7 +64,7 @@ const Card: React.FC<CardProps> = ({
             blurDataURL={thumbnail.placeholder}
           />
         </div>
-        <div className="w-full p-4 bg-white dark:bg-gray-700">
+        <div className="w-full p-4 bg-white rounded-bl-lg rounded-br-lg dark:bg-gray-700">
           {/* <p className="font-medium text-indigo-500 text-md">Article</p> */}
           <div onClick={navigate} className="cursor-pointer">
             <Link href={href}>

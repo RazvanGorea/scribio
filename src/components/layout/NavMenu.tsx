@@ -1,10 +1,10 @@
 import Link from "next/link";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import IconButton from "../form/IconButton";
 import NavMenuItem from "../NavMenuItem";
 import { IoMdExit } from "react-icons/io";
-import { AiOutlineHome } from "react-icons/ai";
+import { AiFillFileAdd, AiOutlineHome } from "react-icons/ai";
 import { MdHistory, MdTurnedIn } from "react-icons/md";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
@@ -13,6 +13,9 @@ import { useTheme } from "../../context/ThemeContext";
 
 import DotsLoading from "../DotsLoading";
 import { CgProfile } from "react-icons/cg";
+import Toggle from "../form/Toggle";
+import Authenticated from "../Authenticated";
+import useIsomorphicLayoutEffect from "../../utils/useIsomorphicLayoutEffect";
 
 interface NavMenuProps {
   visible: boolean;
@@ -21,14 +24,14 @@ interface NavMenuProps {
 
 const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
   const { logout, isUserInitialized, followings, user } = useAuth();
-  const { isDark } = useTheme();
+  const { isDark, toggle: toggleTheme } = useTheme();
 
   const headerRef = useRef<HTMLDivElement>(null);
   const [navHeight, setNavHeight] = useState("auto");
 
   const router = useRouter();
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!headerRef.current) return;
 
     setNavHeight(`calc( 100% - ${headerRef.current.offsetHeight}px )`);
@@ -73,7 +76,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
               text="Profile"
               onClick={onClose}
               href={
-                isUserInitialized && user ? `/profile/${user?._id}` : "/signIn"
+                isUserInitialized && user ? `/profile/${user?._id}` : "/logIn"
               }
             />
             <NavMenuItem
@@ -88,6 +91,22 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
               onClick={onClose}
               href="/saves"
             />
+            <Authenticated>
+              <div className="sm:hidden">
+                <NavMenuItem
+                  icon={AiFillFileAdd}
+                  text="New post"
+                  onClick={onClose}
+                  href="/post/new"
+                />
+              </div>
+            </Authenticated>
+
+            <div className="flex items-center p-2 justify-evenly sm:hidden">
+              <span>Light</span>
+              <Toggle onChange={toggleTheme} value={isDark} id="theme-toggle" />
+              <span>Dark</span>
+            </div>
 
             <div>
               <h6 className="pl-4">
@@ -107,7 +126,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
                   ))
                 : isUserInitialized && <DotsLoading />}
             </div>
-            {isUserInitialized && (
+            <Authenticated>
               <NavMenuItem
                 style={{
                   marginTop: "auto",
@@ -120,7 +139,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ visible, onClose }) => {
                   logout();
                 }}
               />
-            )}
+            </Authenticated>
           </ul>
         </nav>
       </aside>

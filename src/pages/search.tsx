@@ -53,7 +53,10 @@ const Search: NextPage = () => {
   return (
     <Container>
       {postsData && postsData.data.length > 0 && !isLoading && (
-        <h2 className="mb-4">Search results</h2>
+        <h2 className="mb-4 text-3xl sm:text-4xl">
+          Search results for:{" "}
+          <span className="italic font-normal">{searchQuery.current}</span>
+        </h2>
       )}
       {postsData && (
         <PostCardsRenderer

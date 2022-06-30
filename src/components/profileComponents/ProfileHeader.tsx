@@ -2,9 +2,9 @@ import React, { memo } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
 import Skeleton from "react-loading-skeleton";
-import { ImageData } from "../types/ImageData.type";
-import Button from "./form/Button";
-import Avatar from "./imageRelated/Avatar";
+import { ImageData } from "../../types/ImageData.type";
+import Button from "../form/Button";
+import Avatar from "../imageRelated/Avatar";
 
 interface ProfileHeaderProps {
   username: string;

@@ -1,6 +1,12 @@
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import React, { useMemo, useEffect, useCallback, useState } from "react";
+import React, {
+  useMemo,
+  useEffect,
+  useCallback,
+  useState,
+  useRef,
+} from "react";
 import {
   deletePostAppreciation,
   dislikePost,
@@ -17,7 +23,7 @@ import contentParser from "../../../components/editorjsParser/contentParser";
 import { Post as PostType, PostMetrics } from "../../../types/Post.type";
 import dayjs from "dayjs";
 import AuthorDetailsBox from "../../../components/postComponents/AuthorDetailsBox";
-import PostDetails from "../../../components/PostDetails";
+import PostDetails from "../../../components/postComponents/PostDetails";
 import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/router";
 import {
@@ -27,8 +33,10 @@ import {
   isFollowing,
   unfollowUser,
 } from "../../../api/users";
-import PostControl from "../../../components/postComponents/PostControl";
 import { revalidatePage } from "../../../api/global";
+import PostAppreciations from "../../../components/postComponents/PostAppreciations";
+import PostControlMobile from "../../../components/postComponents/PostControlMobile";
+import DeleteConfirmModal from "../../../components/modals/DeleteConfirmModal";
 
 interface PostProps {
   post: PostType;
@@ -45,7 +53,61 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     isFollowing: boolean;
     followers: number;
   } | null>(null);
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState<{ postId: string }>();
+
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const audio = useRef<HTMLAudioElement | null>(null);
+
+  const listen = () => {
+    if (!audio.current) return;
+
+    if (isPlaying) {
+      audio.current.pause();
+      setIsPlaying(false);
+    } else {
+      audio.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  useEffect(() => {
+    audio.current = new Audio(post.audio.url);
+  }, [post.audio.url]);
+
+  useEffect(() => {
+    const audioElem = audio.current;
+
+    if (audioElem) {
+      audioElem.addEventListener("loadedmetadata", (e: any) => {
+        setDuration(e.target.duration);
+      });
+
+      audioElem.addEventListener("ended", () => {
+        setIsPlaying(false);
+      });
+    }
+
+    const timeInterval = setInterval(() => {
+      if (audioElem) setCurrentTime(audioElem.currentTime);
+    }, 1000);
+
+    return () => {
+      if (audioElem) audioElem.pause();
+      clearInterval(timeInterval);
+    };
+  }, [audio]);
+
+  const changeTime = (progress: number) => {
+    if (!audio.current) return;
+
+    const newDuration = (progress * duration) / 100;
+
+    setCurrentTime(newDuration);
+    audio.current.currentTime = newDuration;
+  };
 
   const isPersonal = user?._id === post.author._id;
 
@@ -172,10 +234,9 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
 
   const deletePostHandler = async () => {
     try {
-      if (!user) return;
-      setIsDeleteLoading(true);
+      if (!user || !confirmDelete) return;
 
-      await deletePost(post._id);
+      await deletePost(confirmDelete.postId);
 
       // Update profile page
       await revalidatePage(`/profile/${user._id}`);
@@ -184,7 +245,6 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
       window.location.replace("/");
     } catch (error) {
       console.log(error);
-      setIsDeleteLoading(false);
     }
   };
 
@@ -215,51 +275,56 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!audio) return;
-  //   audio.src = post.audio[currentAudio.current].url;
-
-  //   audio.addEventListener("ended", () => {
-  //     if (currentAudio.current < post.audio.length) {
-  //       audio.src = post.audio[currentAudio.current + 1].url;
-  //       audio.play();
-  //       currentAudio.current++;
-  //     } else setIsListening(false);
-  //   });
-  // }, [audio, post.audio]);
-
   const content = useMemo(() => {
     if (post) return contentParser(post.content);
   }, [post]);
 
   return (
-    <div className="flex justify-around px-3">
-      <div />
-      <article className="px-7 prose bg-white rounded-lg shadow-lg pb-8 pt-3 dark:bg-gray-700 prose-slate w-full lg:prose-lg max-w-[80ch] dark:prose-invert">
-        <PostDetails
+    <>
+      <div className="flex justify-around px-3 lg:space-x-3">
+        <PostAppreciations
           onLike={onLike}
           onDislike={onDislike}
           onSave={savePostHandler}
-          createdAt={dayjs(post.createdAt).format("MMM DD")}
-          dislikes={postAppreciation?.dislikes}
           likes={postAppreciation?.likes}
+          dislikes={postAppreciation?.dislikes}
           saves={postAppreciation?.saves}
-          views={postAppreciation?.views}
-          userAppreciation={postAppreciation?.userAppreciation || null}
           isSaved={postAppreciation?.isSaved}
-          timeToRead={post.timeToRead}
+          userAppreciation={postAppreciation?.userAppreciation || null}
         />
-        {content}
-      </article>
-      {isPersonal ? (
-        <PostControl
-          isDeleteLoading={isDeleteLoading}
-          onDelete={deletePostHandler}
-          postId={post._id}
-        />
-      ) : (
+        <article className="px-5 sm:px-7 prose bg-white rounded-lg shadow-lg pb-8 pt-3 dark:bg-gray-700 prose-slate w-full md:prose-lg max-w-[80ch] dark:prose-invert">
+          <PostDetails
+            isListening={isPlaying}
+            onListen={listen}
+            onLike={onLike}
+            onDislike={onDislike}
+            onSave={savePostHandler}
+            createdAt={dayjs(post.createdAt).format("MMM DD")}
+            onFollow={followHandler}
+            dislikes={postAppreciation?.dislikes}
+            likes={postAppreciation?.likes}
+            saves={postAppreciation?.saves}
+            views={postAppreciation?.views}
+            userAppreciation={postAppreciation?.userAppreciation || null}
+            isSaved={postAppreciation?.isSaved}
+            timeToRead={post.timeToRead}
+            authorAvatar={post.author.avatar}
+            authorUsername={post.author.username}
+            authorUid={post.author._id}
+            followers={authorFollowData?.followers}
+            isFollowing={authorFollowData?.isFollowing}
+            isPersonal={isPersonal}
+            postId={post._id}
+            onDelete={() => setConfirmDelete({ postId: post._id })}
+          />
+          {content}
+        </article>
         <AuthorDetailsBox
-          speechSoundUrl={post.audio.url}
+          isPlaying={isPlaying}
+          onPlayerListen={listen}
+          onPlayerTimeChange={changeTime}
+          playerCurrentTime={currentTime}
+          playerDuration={duration}
           onFollow={followHandler}
           uid={post.author._id}
           avatar={post.author.avatar}
@@ -267,9 +332,24 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
           followers={authorFollowData?.followers}
           username={post.author.username}
           userDescription={authorDescription}
+          isPersonal={isPersonal}
+          onDelete={deletePostHandler}
+          postId={post._id}
         />
-      )}
-    </div>
+      </div>
+      <PostControlMobile
+        isPlaying={isPlaying}
+        onListen={listen}
+        onPlayerTimeChange={changeTime}
+        playerCurrentTime={currentTime}
+        playerDuration={duration}
+      />
+      <DeleteConfirmModal
+        visible={!!confirmDelete}
+        onClose={() => setConfirmDelete(undefined)}
+        onDelete={deletePostHandler}
+      />
+    </>
   );
 };
 

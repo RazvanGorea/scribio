@@ -20,7 +20,7 @@ const Slider: React.FC<SliderProps> = ({ progress, onChange }) => {
             className="h-1 bg-blue-400 rounded-full "
           />
           <input
-            value={value}
+            value={value || 0}
             onChange={(e) => setInternalProgress(parseInt(e.target.value))}
             onMouseDown={() => setIsMouseDown(true)}
             onMouseUp={() => {

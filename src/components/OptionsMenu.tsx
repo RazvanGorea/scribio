@@ -13,9 +13,13 @@ export interface MenuOption {
 
 interface OptionsMenuProps {
   items: MenuOption[];
+  position?: "left" | "right";
 }
 
-const OptionsMenu: React.FC<OptionsMenuProps> = ({ items }) => {
+const OptionsMenu: React.FC<OptionsMenuProps> = ({
+  items,
+  position = "left",
+}) => {
   const [open, setOpen] = useState(false);
 
   const toggle = () => setOpen((val) => !val);
@@ -26,16 +30,18 @@ const OptionsMenu: React.FC<OptionsMenuProps> = ({ items }) => {
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      <div>
+      <div className="relative">
         <IconButton onClick={toggle} icon={GoKebabVertical} />
         <div
           className={`${
             open
               ? "visible opacity-100 translate-y-0"
               : "-translate-y-2 opacity-0 invisible"
+          } ${
+            position === "left" ? "right-0" : "left-0"
           } transition-all z-10 bg-white divide-y divide-gray-100 rounded shadow  dark:bg-gray-700 absolute`}
         >
-          <ul className="py-1 text-sm text-gray-700 dark:text-gray-200">
+          <ul className="py-1 text-sm text-gray-700 dark:text-gray-200 ">
             {open &&
               items.map((item, index) => {
                 const Icon = item.icon;

@@ -26,7 +26,7 @@ const ImageCropModal: React.FC<ImageCropModalProps> = ({
   showGrid,
 }) => {
   return (
-    <Modal onClose={onClose} visible={visible}>
+    <Modal onClose={onClose} visible={visible} withCross>
       <h2 className="mb-3">Crop your image</h2>
       {imageUrl && imageType && imageName && (
         <ImageCrop

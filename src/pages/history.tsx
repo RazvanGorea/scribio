@@ -65,7 +65,7 @@ const History: NextPage = () => {
 
   return (
     <Authenticated redirectPath="/logIn">
-      <Container sm>
+      <Container style={{ overflowX: "auto" }} sm>
         {!loading && data?.data.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <Lottie

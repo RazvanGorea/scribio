@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = () => {
               onClick={() => setVisible(true)}
             />
             <Link href="/">
-              <a className="text-3xl text-gray-500 select-none hover:text-black dark:hover:text-white dark:text-gray-200">
+              <a className="hidden text-3xl text-gray-500 select-none sm:block hover:text-black dark:hover:text-white dark:text-gray-200">
                 Scribio
               </a>
             </Link>
@@ -42,18 +42,22 @@ const Header: React.FC<HeaderProps> = () => {
 
           <div className="flex items-center space-x-2">
             <Authenticated>
-              <IconButton
-                icon={AiFillFileAdd}
-                shape="square"
-                href="/post/new"
-              />
+              <div className="hidden sm:block">
+                <IconButton
+                  icon={AiFillFileAdd}
+                  shape="square"
+                  href="/post/new"
+                />
+              </div>
             </Authenticated>
 
-            <IconButton
-              icon={isDark ? BsFillMoonFill : BsFillSunFill}
-              onClick={toggle}
-              shape="square"
-            />
+            <div className="hidden sm:block">
+              <IconButton
+                icon={isDark ? BsFillMoonFill : BsFillSunFill}
+                onClick={toggle}
+                shape="square"
+              />
+            </div>
             {user && (
               <Link href={`/profile/${user._id}`}>
                 <a>

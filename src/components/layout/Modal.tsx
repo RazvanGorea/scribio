@@ -25,14 +25,12 @@ const Modal: React.FC<ModalProps> = ({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-3/4 max-w-4xl p-5 bg-white rounded-lg shadow-lg dark:bg-gray-700"
+        className="relative w-full max-w-4xl p-5 bg-white rounded-lg shadow-lg dark:bg-gray-700"
       >
         {withCross && (
-          <IconButton
-            style={{ position: "absolute", right: 15, top: 15 }}
-            icon={MdClose}
-            onClick={onClose}
-          />
+          <div className="absolute sm:top-4 sm:right-4 top-2 right-2">
+            <IconButton icon={MdClose} onClick={onClose} />
+          </div>
         )}
         {children}
       </div>

@@ -22,15 +22,14 @@ import { useRouter } from "next/router";
 import AboutUser from "../../components/AboutUser";
 import * as emptySearchAnim from "../../assets/lottie/emptySearch.json";
 import EmptyComponent from "../../components/EmptyComponent";
-import ProfileHeader from "../../components/ProfileHeader";
+import ProfileHeader from "../../components/profileComponents/ProfileHeader";
 import DropDown from "../../components/form/DropDown";
-import { deletePost, getPosts, GetPostsResponse } from "../../api/posts";
-import { PostSort } from "../../types/PostSort.type";
+import { deletePost, GetPostsResponse } from "../../api/posts";
 import DotsLoading from "../../components/DotsLoading";
 import { FiEdit, FiTrash } from "react-icons/fi";
-import Modal from "../../components/layout/Modal";
-import Button from "../../components/form/Button";
+
 import { revalidatePage } from "../../api/global";
+import DeleteConfirmModal from "../../components/modals/DeleteConfirmModal";
 
 interface ProfileProps {
   user: UserPublicProfile;
@@ -44,7 +43,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   // Check if current profile belongs to authenticated user
   const isPersonal = user?._id === authUser?._id;
 
-  const [tab, setTab] = useState("Posts");
+  const [tab, setTab] = useState("posts");
   const [followData, setFollowData] = useState<
     | {
         isFollowing: boolean;
@@ -60,7 +59,6 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   });
   const [isSortLoading, setSortLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ postId: string }>();
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const fetchUserFollowData = useCallback(async () => {
     if (isUserInitialized && !isPersonal) {
@@ -146,7 +144,6 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   const deletePostHandler = async () => {
     try {
       if (!confirmDelete) return;
-      setIsDeleteLoading(true);
 
       await deletePost(confirmDelete.postId);
 
@@ -157,20 +154,18 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       window.location.reload();
     } catch (error) {
       console.log(error);
-      setIsDeleteLoading(false);
     }
   };
 
   let display: JSX.Element;
   switch (tab) {
-    case "Posts":
+    case "posts":
       if (isSortLoading) {
         display = <DotsLoading style={{ maxWidth: 200, maxHeight: "auto" }} />;
       } else {
         display =
           posts.data.length > 0 ? (
             <PostCardsRenderer
-              containerStyles={{ paddingTop: "2rem" }}
               posts={posts.data}
               hasMore={posts.hasMore}
               onFetchMore={fetchPosts}
@@ -202,7 +197,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       }
       break;
 
-    case "About":
+    case "about":
       display = (
         <AboutUser
           description={user.description}
@@ -213,7 +208,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       );
       break;
 
-    case "Series":
+    case "series":
       display = (
         <EmptyComponent
           animationData={emptySearchAnim}
@@ -227,7 +222,6 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     default:
       display = (
         <PostCardsRenderer
-          containerStyles={{ paddingTop: "2rem" }}
           posts={posts.data}
           hasMore={posts.hasMore}
           onFetchMore={fetchPosts}
@@ -261,13 +255,19 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
           isFollowing={followData?.isFollowing}
           isPersonal={isPersonal}
         />
-        <div className="flex items-center justify-between">
-          <Tabs
-            style={{ marginTop: "1rem", marginBottom: "1rem" }}
-            items={[{ text: "Posts" }, { text: "Series" }, { text: "About" }]}
-            onChange={(i, text) => setTab(text)}
-          />
-          {(tab === "Posts" || tab === "Series") && (
+        <div className="flex items-center justify-between my-4">
+          <div className="hidden sm:block">
+            <Tabs
+              value={tab}
+              items={[
+                { text: "Posts", value: "posts" },
+                { text: "Series", value: "series" },
+                { text: "About", value: "about" },
+              ]}
+              onChange={(val) => setTab(val)}
+            />
+          </div>
+          {(tab === "posts" || tab === "series") && (
             <DropDown
               value={sort}
               items={[
@@ -284,22 +284,25 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
         </div>
         {display}
       </Container>
-      <Modal
+
+      <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg dark:bg-gray-800 sm:hidden shadow-black">
+        <Tabs
+          value={tab}
+          items={[
+            { text: "Posts", value: "posts" },
+            { text: "Series", value: "series" },
+            { text: "About", value: "about" },
+          ]}
+          fullWidth
+          onChange={(val) => setTab(val)}
+        />
+      </div>
+
+      <DeleteConfirmModal
         visible={!!confirmDelete}
         onClose={() => setConfirmDelete(undefined)}
-      >
-        <h2 className="text-center">Are you sure?</h2>
-        <div className="flex justify-center mt-5 space-x-3">
-          <Button onClick={() => setConfirmDelete(undefined)}>Cancel</Button>
-          <Button
-            onClick={deletePostHandler}
-            loading={isDeleteLoading}
-            color="red"
-          >
-            Delete
-          </Button>
-        </div>
-      </Modal>
+        onDelete={deletePostHandler}
+      />
     </>
   );
 };

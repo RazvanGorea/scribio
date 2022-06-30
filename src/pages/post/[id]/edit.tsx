@@ -101,14 +101,14 @@ const EditPost: NextPage = () => {
   return (
     <Authenticated redirectPath="/">
       {post ? (
-        <div className="flex justify-center ">
+        <div className="flex flex-col justify-center lg:flex-row">
           <div className="flex justify-center mx-auto max-w-[90ch] w-full">
             <Editor
               onInitialize={(instance) => (editorRef.current = instance)}
               defaultValue={post.content}
             />
           </div>
-          <div className="max-w-xs p-5 bg-white rounded-lg shadow-lg dark:bg-gray-700">
+          <div className="p-5 bg-white rounded-lg shadow-lg lg:max-w-xs max-w-[90ch] mx-auto w-full lg:mx-0 mt-3 lg:mt-0 dark:bg-gray-700">
             <div className="sticky top-[6rem]">
               <div className="flex justify-center mt-8 mb-2">
                 <ImageUploader
