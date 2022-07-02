@@ -12,6 +12,9 @@ import { googleAuth, logIn as apiLogIn } from "../api/auth";
 import LogInForm, { LoginFormValues } from "../components/forms/LogInForm";
 import { NextPage } from "next";
 import Unauthenticated from "../components/Unauthenticated";
+import toast from "react-hot-toast";
+import axios, { AxiosError } from "axios";
+import Head from "next/head";
 
 const SignIn: NextPage = () => {
   const { theme } = useTheme();
@@ -26,8 +29,10 @@ const SignIn: NextPage = () => {
 
       login(rest, access_token);
       setSubmitting(false);
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
       setSubmitting(false);
     }
   };
@@ -43,44 +48,53 @@ const SignIn: NextPage = () => {
 
         login(user, access_token);
       }
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
+      toast.error("Something went wrong:(");
     }
   };
 
   return (
-    <Unauthenticated
-      redirectPath="/"
-      redirectQuery={
-        // Remind user to upload an avatar
-        // Note. If the user didn't upload an avatar, the key is an empty string.
-        user && !user.avatar?.key ? { showUploadAvatarModal: true } : undefined
-      }
-    >
-      <div className="flex items-center h-full">
-        <Lottie
-          style={{ cursor: "default", width: "50%" }}
-          options={{ animationData: loginAnim, loop: true, autoplay: true }}
-          isClickToPauseDisabled
-        />
-        <div className="flex flex-col items-center justify-center w-1/2 h-full">
-          <LogInForm onSubmit={submit} />
-          <div className="relative flex justify-center w-full max-w-xs mt-3 mb-5 text-black dark:text-white">
-            <h2 className="relative z-[1] px-3 text-center bg-gray-100 dark:bg-gray-800">
-              Or
-            </h2>
-            <hr className="absolute w-full top-[60%] border-t-2" />
+    <>
+      <Head>
+        <title>LogIn | Scribio</title>
+      </Head>
+      <Unauthenticated
+        redirectPath="/"
+        redirectQuery={
+          // Remind user to upload an avatar
+          // Note. If the user didn't upload an avatar, the key is an empty string.
+          user && !user.avatar?.key
+            ? { showUploadAvatarModal: true }
+            : undefined
+        }
+      >
+        <div className="flex items-center justify-center h-full">
+          <div className="hidden w-1/2 md:block">
+            <Lottie
+              style={{ cursor: "default", width: "100%" }}
+              options={{ animationData: loginAnim, loop: true, autoplay: true }}
+              isClickToPauseDisabled
+            />
           </div>
-          <GoogleLogin
-            clientId="354641229420-jlplpfo84luiaevi1v4o15kea9d216h4.apps.googleusercontent.com"
-            buttonText="Continue with Google"
-            onSuccess={googleLogin}
-            onFailure={(d) => console.log(d)}
-            theme={theme}
-          />
+          <div className="flex flex-col items-center justify-center w-full h-full px-2 md:w-1/2">
+            <LogInForm onSubmit={submit} />
+            <div className="relative flex justify-center w-full max-w-xs mt-3 mb-5 text-black dark:text-white">
+              <h2 className="relative z-[1] px-3 text-center bg-gray-100 dark:bg-gray-800">
+                Or
+              </h2>
+              <hr className="absolute w-full top-[60%] border-t-2" />
+            </div>
+            <GoogleLogin
+              clientId="354641229420-jlplpfo84luiaevi1v4o15kea9d216h4.apps.googleusercontent.com"
+              buttonText="Continue with Google"
+              onSuccess={googleLogin}
+              onFailure={(d) => console.log(d)}
+              theme={theme}
+            />
+          </div>
         </div>
-      </div>
-    </Unauthenticated>
+      </Unauthenticated>
+    </>
   );
 };
 

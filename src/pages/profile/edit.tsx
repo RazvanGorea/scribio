@@ -1,6 +1,9 @@
+import axios from "axios";
 import { NextPage } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FiEdit } from "react-icons/fi";
 import { revalidatePage } from "../../api/global";
 import {
@@ -55,7 +58,7 @@ const Edit: NextPage = () => {
 
       reload();
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 
@@ -75,7 +78,7 @@ const Edit: NextPage = () => {
 
       reload();
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 
@@ -85,7 +88,7 @@ const Edit: NextPage = () => {
 
       setConfirmationModalVisibility(true);
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 
@@ -95,59 +98,64 @@ const Edit: NextPage = () => {
 
       reload();
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 
   return (
-    <Authenticated redirectPath="/logIn">
-      <Container sm>
-        <h2 className="mb-4">Edit profile</h2>
-        <div className="px-5 py-6 space-y-4 bg-white rounded-lg shadow-lg dark:bg-gray-700 h-fit">
-          <div className="flex justify-center">
-            <div className="relative">
-              {user && <Avatar size={110} src={user?.avatar} />}
-              <IconButton
-                onClick={() => setUploadModalVisibility(true)}
-                icon={FiEdit}
-                style={{ position: "absolute", bottom: -16, right: -16 }}
-              />
+    <>
+      <Head>
+        <title>Edit profile | Scribio</title>
+      </Head>
+      <Authenticated redirectPath="/logIn">
+        <Container sm>
+          <h2 className="mb-4">Edit profile</h2>
+          <div className="px-5 py-6 space-y-4 bg-white rounded-lg shadow-lg dark:bg-gray-700 h-fit">
+            <div className="flex justify-center">
+              <div className="relative">
+                {user && <Avatar size={110} src={user?.avatar} />}
+                <IconButton
+                  onClick={() => setUploadModalVisibility(true)}
+                  icon={FiEdit}
+                  style={{ position: "absolute", bottom: -16, right: -16 }}
+                />
+              </div>
             </div>
-          </div>
-          <UsernameUpdate
-            onUpdate={updateUsernameHandler}
-            initialValue={user?.username}
-          />
-          <EmailUpdate
-            onUpdate={initEmailUpdateHandler}
-            initialValue={user?.email}
-          />
-          {typeof description === "undefined" ? (
-            <DotsLoading />
-          ) : (
-            <DescriptionUpdate
-              onUpdate={updateDescriptionHandler}
-              initialValue={description}
+            <UsernameUpdate
+              onUpdate={updateUsernameHandler}
+              initialValue={user?.username}
             />
-          )}
-        </div>
-      </Container>
-      {user && (
-        <UploadAvatarModal
-          userId={user._id}
-          userAvatar={user.avatar}
-          visible={isUploadModalVisible}
-          onClose={() => setUploadModalVisibility(false)}
+            <EmailUpdate
+              onUpdate={initEmailUpdateHandler}
+              initialValue={user?.email}
+            />
+            {typeof description === "undefined" ? (
+              <DotsLoading />
+            ) : (
+              <DescriptionUpdate
+                onUpdate={updateDescriptionHandler}
+                initialValue={description}
+              />
+            )}
+          </div>
+        </Container>
+        {user && (
+          <UploadAvatarModal
+            userId={user._id}
+            userAvatar={user.avatar}
+            visible={isUploadModalVisible}
+            onClose={() => setUploadModalVisibility(false)}
+          />
+        )}
+        <ConfirmationCodeModal
+          visible={isConfirmationModalVisible}
+          onClose={() => setConfirmationModalVisibility(false)}
+          onSubmit={finishEmailUpdateHandler}
+          heading="Email verification"
+          description="We sent you an confirmation code to your new email"
         />
-      )}
-      <ConfirmationCodeModal
-        visible={isConfirmationModalVisible}
-        onClose={() => setConfirmationModalVisibility(false)}
-        onSubmit={finishEmailUpdateHandler}
-        heading="Email verification"
-        description="We sent you an confirmation code to your new email"
-      />
-    </Authenticated>
+      </Authenticated>
+    </>
   );
 };
 

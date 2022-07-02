@@ -23,7 +23,7 @@ const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onSubmit,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center w-1/2 h-full">
+    <div className="flex flex-col items-center justify-center w-full h-full md:w-1/2">
       <h1 className="text-center mb-7">Password reset</h1>
       <Formik
         initialValues={{

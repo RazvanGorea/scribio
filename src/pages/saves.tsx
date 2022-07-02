@@ -9,6 +9,7 @@ import { PostPreview } from "../types/Post.type";
 import * as emptyAnim from "../assets/lottie/emptyFace.json";
 import DotsLoading from "../components/DotsLoading";
 import { unsavePost } from "../api/posts";
+import Head from "next/head";
 
 const Saves: NextPage = () => {
   const [savedPosts, setSavedPosts] = useState<PostPreview[]>();
@@ -63,9 +64,14 @@ const Saves: NextPage = () => {
     );
 
   return (
-    <Authenticated redirectPath="/logIn">
-      <Container>{display}</Container>
-    </Authenticated>
+    <>
+      <Head>
+        <title>Saves | Scribio</title>
+      </Head>
+      <Authenticated redirectPath="/logIn">
+        <Container>{display}</Container>
+      </Authenticated>
+    </>
   );
 };
 

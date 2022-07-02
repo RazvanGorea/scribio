@@ -49,7 +49,7 @@ export interface GetPostsResponse {
   data: PostPreview[];
 }
 
-export async function getPosts(page = 0, searchQuery?: string) {
+export async function getPosts(page = 0, searchQuery: string = "") {
   const res = await client.get<GetPostsResponse>(
     `/posts?p=${page}&search=${searchQuery}`
   );

@@ -31,7 +31,7 @@ interface SignUpFormProps {
 
 const SignUpForm: React.FC<SignUpFormProps> = ({ onSubmit }) => {
   return (
-    <div className="flex flex-col items-center justify-center w-1/2 h-full">
+    <div className="flex flex-col items-center justify-center w-full h-full px-2 md:w-1/2">
       <h1 className="text-center mb-7">Sign Up</h1>
       <Formik
         initialValues={{

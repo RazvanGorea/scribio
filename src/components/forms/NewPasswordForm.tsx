@@ -26,8 +26,8 @@ interface NewPasswordFormProps {
 
 const NewPasswordForm: React.FC<NewPasswordFormProps> = ({ onSubmit }) => {
   return (
-    <div className="flex flex-col items-center justify-center w-1/2 h-full">
-      <h1 className="text-center mb-7">Password reset</h1>
+    <div className="flex flex-col items-center justify-center w-full h-full md:w-1/2">
+      <h1 className="text-center mb-7">New password</h1>
       <Formik
         initialValues={{
           password: "",

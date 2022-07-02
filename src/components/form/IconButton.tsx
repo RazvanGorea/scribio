@@ -20,7 +20,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   shape = "circle",
   href,
   disabled = false,
-  type,
+  type = "button",
   size = 25,
 }) => {
   const IconComp = icon;

@@ -9,6 +9,9 @@ import ConfirmSignUpForm from "../components/forms/ConfirmCodeForm";
 import { NextPage } from "next";
 import Unauthenticated from "../components/Unauthenticated";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import axios from "axios";
+import Head from "next/head";
 
 const SignUp: NextPage = () => {
   const [isAuthInitialized, setAuthInitialized] = useState<{
@@ -26,9 +29,12 @@ const SignUp: NextPage = () => {
       await initSignUp(values);
       setAuthInitialized({ value: true, email: values.email });
       setSubmitting(false);
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
       setSubmitting(false);
+
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
     }
   };
 
@@ -40,33 +46,48 @@ const SignUp: NextPage = () => {
       });
 
       login(user, access_token);
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
     }
   };
 
   return (
-    <Unauthenticated
-      redirectPath="/"
-      redirectQuery={
-        // Remind user to upload an avatar
-        // Note. If the user didn't upload an avatar, the key is an empty string.
-        user && !user.avatar?.key ? { showUploadAvatarModal: true } : undefined
-      }
-    >
-      <div className="flex items-center h-full">
-        <Lottie
-          style={{ cursor: "default", width: "50%" }}
-          options={{ animationData: signUpAnim, loop: true, autoplay: true }}
-          isClickToPauseDisabled
-        />
-        {isAuthInitialized.value ? (
-          <ConfirmSignUpForm onSubmit={confirmSignUpFormSubmit} />
-        ) : (
-          <SignUpForm onSubmit={signUpFormSubmit} />
-        )}
-      </div>
-    </Unauthenticated>
+    <>
+      <Head>
+        <title>SignUp | Scribio</title>
+      </Head>
+      <Unauthenticated
+        redirectPath="/"
+        redirectQuery={
+          // Remind user to upload an avatar
+          // Note. If the user didn't upload an avatar, the key is an empty string.
+          user && !user.avatar?.key
+            ? { showUploadAvatarModal: true }
+            : undefined
+        }
+      >
+        <div className="flex items-center justify-center h-full">
+          <div className="hidden w-1/2 md:block">
+            <Lottie
+              style={{ cursor: "default", width: "100%" }}
+              options={{
+                animationData: signUpAnim,
+                loop: true,
+                autoplay: true,
+              }}
+              isClickToPauseDisabled
+            />
+          </div>
+          {isAuthInitialized.value ? (
+            <ConfirmSignUpForm onSubmit={confirmSignUpFormSubmit} />
+          ) : (
+            <SignUpForm onSubmit={signUpFormSubmit} />
+          )}
+        </div>
+      </Unauthenticated>
+    </>
   );
 };
 

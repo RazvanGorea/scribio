@@ -6,6 +6,7 @@ import Container from "../components/layout/Container";
 import { useAuth } from "../context/AuthContext";
 import UploadAvatarModal from "../components/modals/UploadAvatarModal";
 import PostCardsRenderer from "../components/PostCardsRenderer";
+import Head from "next/head";
 
 interface HomeProps {
   posts: GetPostsResponse;
@@ -41,6 +42,9 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
 
   return (
     <>
+      <Head>
+        <title>Home | Scribio</title>
+      </Head>
       <Container>
         <PostCardsRenderer
           posts={postsData.data}

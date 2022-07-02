@@ -37,6 +37,7 @@ import { revalidatePage } from "../../../api/global";
 import PostAppreciations from "../../../components/postComponents/PostAppreciations";
 import PostControlMobile from "../../../components/postComponents/PostControlMobile";
 import DeleteConfirmModal from "../../../components/modals/DeleteConfirmModal";
+import Head from "next/head";
 
 interface PostProps {
   post: PostType;
@@ -281,6 +282,9 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
 
   return (
     <>
+      <Head>
+        <title>{post.title} | Scribio</title>
+      </Head>
       <div className="flex justify-around px-3 lg:space-x-3">
         <PostAppreciations
           onLike={onLike}

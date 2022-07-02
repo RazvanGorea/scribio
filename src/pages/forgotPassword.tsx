@@ -1,6 +1,9 @@
+import axios from "axios";
 import { FormikHelpers } from "formik";
 import { NextPage } from "next";
+import Head from "next/head";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import Lottie from "react-lottie";
 import {
   checkResetPasswordCode,
@@ -15,6 +18,7 @@ import ForgotPasswordForm, {
 import NewPasswordForm, {
   NewPasswordFormValues,
 } from "../components/forms/NewPasswordForm";
+import Unauthenticated from "../components/Unauthenticated";
 import { useAuth } from "../context/AuthContext";
 
 interface IState {
@@ -38,11 +42,17 @@ const ForgotPassword: NextPage = () => {
   ) => {
     try {
       await initResetPassword({ email });
+
+      toast.success("Check your email!");
+
       setState((val) => ({ ...val, email, step: "confirm" }));
       setSubmitting(false);
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
       setSubmitting(false);
+
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
     }
   };
 
@@ -53,8 +63,10 @@ const ForgotPassword: NextPage = () => {
       await checkResetPasswordCode({ confirmation_code, email: state.email });
 
       setState((val) => ({ ...val, step: "finish", confirmation_code }));
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
     }
   };
 
@@ -73,9 +85,12 @@ const ForgotPassword: NextPage = () => {
       login(user, access_token);
 
       setSubmitting(false);
-    } catch (error: any) {
-      console.log(error.response.data);
+    } catch (error) {
       setSubmitting(false);
+
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data.message);
+      }
     }
   };
 
@@ -86,15 +101,28 @@ const ForgotPassword: NextPage = () => {
     form = <NewPasswordForm onSubmit={finishPasswordResetSubmit} />;
 
   return (
-    <div className="flex items-center h-full">
-      <Lottie
-        style={{ cursor: "default", width: "50%", maxHeight: "75vh" }}
-        options={{ animationData: forgotAnim, loop: true, autoplay: true }}
-        isClickToPauseDisabled
-      />
+    <>
+      <Head>
+        <title>Password reset | Scribio</title>
+      </Head>
+      <Unauthenticated redirectPath="/">
+        <div className="flex items-center justify-center h-full px-2 sm:px-0">
+          <div className="hidden md:block">
+            <Lottie
+              style={{ cursor: "default", width: "100%", maxHeight: "75vh" }}
+              options={{
+                animationData: forgotAnim,
+                loop: true,
+                autoplay: true,
+              }}
+              isClickToPauseDisabled
+            />
+          </div>
 
-      {form}
-    </div>
+          {form}
+        </div>
+      </Unauthenticated>
+    </>
   );
 };
 

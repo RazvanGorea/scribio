@@ -64,7 +64,7 @@ const NewPostForm: React.FC<NewPostFormProps> = ({
               loading={isSubmitting}
               style={{ marginTop: 15, marginBottom: 3 }}
             >
-              Submit
+              Publish
             </Button>
           </form>
         )}

@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = () => {
     <>
       <NavMenu onClose={() => setVisible(false)} visible={visible} />
       <Headroom style={{ zIndex: 2 }}>
-        <header className="sticky flex items-center justify-between w-full px-6 py-3 bg-white shadow-lg dark:bg-gray-700 ">
+        <header className="sticky flex items-center justify-between w-full px-2 py-3 bg-white shadow-lg header dark:bg-gray-700">
           <div className="flex space-x-2">
             <IconButton
               icon={GiHamburgerMenu}
@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = () => {
               </Link>
             )}
             <Unauthenticated>
-              <Button sm href="/logIn">
+              <Button style={{ whiteSpace: "nowrap" }} sm href="/logIn">
                 Log In
               </Button>
             </Unauthenticated>

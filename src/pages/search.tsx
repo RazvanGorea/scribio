@@ -7,6 +7,7 @@ import EmptyComponent from "../components/EmptyComponent";
 import Container from "../components/layout/Container";
 import PostCardsRenderer from "../components/PostCardsRenderer";
 import * as emptySearchAnim from "../assets/lottie/emptySearch.json";
+import Head from "next/head";
 
 const Search: NextPage = () => {
   const router = useRouter();
@@ -51,33 +52,38 @@ const Search: NextPage = () => {
   }, [router.query, fetchPosts]);
 
   return (
-    <Container>
-      {postsData && postsData.data.length > 0 && !isLoading && (
-        <h2 className="mb-4 text-3xl sm:text-4xl">
-          Search results for:{" "}
-          <span className="italic font-normal">{searchQuery.current}</span>
-        </h2>
-      )}
-      {postsData && (
-        <PostCardsRenderer
-          posts={postsData.data}
-          hasMore={postsData.hasMore}
-          onFetchMore={() => fetchPosts(searchQuery.current)}
-        />
-      )}
-      {isLoading && (
-        <div className="flex items-center justify-center w-full h-full">
-          <DotsLoading style={{ maxWidth: 200, maxHeight: "initial" }} />
-        </div>
-      )}
-      {!isLoading && postsData?.data.length === 0 && (
-        <EmptyComponent
-          containerStyle={{ marginTop: "5rem" }}
-          animationData={emptySearchAnim}
-          text="Nothing found"
-        />
-      )}
-    </Container>
+    <>
+      <Head>
+        <title>Search | Scribio</title>
+      </Head>
+      <Container>
+        {postsData && postsData.data.length > 0 && !isLoading && (
+          <h2 className="mb-4 text-3xl sm:text-4xl">
+            Search results for:{" "}
+            <span className="italic font-normal">{searchQuery.current}</span>
+          </h2>
+        )}
+        {postsData && (
+          <PostCardsRenderer
+            posts={postsData.data}
+            hasMore={postsData.hasMore}
+            onFetchMore={() => fetchPosts(searchQuery.current)}
+          />
+        )}
+        {isLoading && (
+          <div className="flex items-center justify-center w-full h-full">
+            <DotsLoading style={{ maxWidth: 200, maxHeight: "initial" }} />
+          </div>
+        )}
+        {!isLoading && postsData?.data.length === 0 && (
+          <EmptyComponent
+            containerStyle={{ marginTop: "5rem" }}
+            animationData={emptySearchAnim}
+            text="Nothing found"
+          />
+        )}
+      </Container>
+    </>
   );
 };
 

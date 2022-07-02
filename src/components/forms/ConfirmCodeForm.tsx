@@ -5,7 +5,7 @@ const ReactCodeInput = dynamic(import("react-code-input"));
 import Button from "../form/Button";
 
 interface ConfirmSignUpFormProps {
-  onSubmit: (value: string) => void;
+  onSubmit: (value: string) => Promise<void>;
   heading?: string;
   description?: string;
 }
@@ -23,14 +23,16 @@ const ConfirmCodeForm: React.FC<ConfirmSignUpFormProps> = ({
     e.preventDefault();
 
     setLoading(true);
-    onSubmit(value);
+    onSubmit(value).then(() => setLoading(false));
   };
 
   return (
-    <div className="flex items-center justify-center w-1/2 h-full">
+    <div className="flex items-center justify-center w-full h-full md:w-1/2">
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         <h1 className="text-center ">{heading}</h1>
-        <p className="mb-7 dark:text-white">{description}</p>
+        <p className="text-center mb-7 dark:text-white md:text-left">
+          {description}
+        </p>
         <ReactCodeInput
           value={value}
           onChange={setValue}

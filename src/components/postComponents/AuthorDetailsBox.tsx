@@ -63,16 +63,18 @@ const AuthorDetailsBox: React.FC<AuthorDetailsBoxProps> = ({
 
       <div>
         <p className="my-3 text-gray-500 line-clamp-6">{userDescription}</p>
-        <Button
-          onClick={onFollow}
-          sm
-          loading={typeof isFollowing === "undefined"}
-          style={{ borderRadius: 30 }}
-          active={isFollowing}
-          icon={isFollowing ? AiOutlineCheck : undefined}
-        >
-          {isFollowing ? "Following" : "Follow"}
-        </Button>
+        {!isPersonal && (
+          <Button
+            onClick={onFollow}
+            sm
+            loading={typeof isFollowing === "undefined"}
+            style={{ borderRadius: 30 }}
+            active={isFollowing}
+            icon={isFollowing ? AiOutlineCheck : undefined}
+          >
+            {isFollowing ? "Following" : "Follow"}
+          </Button>
+        )}
       </div>
       <hr className="my-4 border-gray-500 dark:border-gray-400" />
       <Player

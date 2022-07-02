@@ -30,6 +30,7 @@ import { FiEdit, FiTrash } from "react-icons/fi";
 
 import { revalidatePage } from "../../api/global";
 import DeleteConfirmModal from "../../components/modals/DeleteConfirmModal";
+import Head from "next/head";
 
 interface ProfileProps {
   user: UserPublicProfile;
@@ -246,6 +247,9 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
 
   return (
     <>
+      <Head>
+        <title>{user.username} | Scribio</title>
+      </Head>
       <Container>
         <ProfileHeader
           avatar={user.avatar}

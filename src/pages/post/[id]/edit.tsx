@@ -1,8 +1,10 @@
 import { FormikHelpers } from "formik";
 import { NextPage } from "next";
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { revalidatePage } from "../../../api/global";
 import { createPost, getPostById, updatePost } from "../../../api/posts";
 import Authenticated from "../../../components/Authenticated";
@@ -99,45 +101,62 @@ const EditPost: NextPage = () => {
   };
 
   return (
-    <Authenticated redirectPath="/">
-      {post ? (
-        <div className="flex flex-col justify-center lg:flex-row">
-          <div className="flex justify-center mx-auto max-w-[90ch] w-full">
-            <Editor
-              onInitialize={(instance) => (editorRef.current = instance)}
-              defaultValue={post.content}
-            />
-          </div>
-          <div className="p-5 bg-white rounded-lg shadow-lg lg:max-w-xs max-w-[90ch] mx-auto w-full lg:mx-0 mt-3 lg:mt-0 dark:bg-gray-700">
-            <div className="sticky top-[6rem]">
-              <div className="flex justify-center mt-8 mb-2">
-                <ImageUploader
-                  label="Thumbnail*"
-                  file={rawThumbnail}
-                  handleChange={handleImageUpload}
-                  types={["jpeg", "jpg", "png", "gif", "webp"]}
+    <>
+      <Head>
+        <title>Edit post | Scribio</title>
+      </Head>
+      <Authenticated redirectPath="/">
+        {post ? (
+          <div className="flex flex-col justify-center lg:flex-row">
+            <div className="flex justify-center mx-auto max-w-[90ch] w-full">
+              <Editor
+                onInitialize={(instance) => (editorRef.current = instance)}
+                defaultValue={post.content}
+              />
+            </div>
+            <div className="p-5 bg-white rounded-lg shadow-lg lg:max-w-xs max-w-[90ch] mx-auto w-full lg:mx-0 mt-3 lg:mt-0 dark:bg-gray-700">
+              <div className="sticky top-[6rem]">
+                <div className="flex justify-center mt-8 mb-2">
+                  <ImageUploader
+                    label="Thumbnail*"
+                    file={rawThumbnail}
+                    handleChange={handleImageUpload}
+                    types={["jpeg", "jpg", "png", "gif", "webp"]}
+                  />
+                </div>
+                <NewPostForm
+                  initialValue={post.title}
+                  onSubmit={(values, helpers) =>
+                    toast.promise(submit(values, helpers), {
+                      loading: "Updating your post...",
+                      success: "Successfully updated!",
+                      error: (err) =>
+                        err.response.data.message || "Something went wrong:(",
+                    })
+                  }
                 />
               </div>
-              <NewPostForm initialValue={post.title} onSubmit={submit} />
             </div>
           </div>
-        </div>
-      ) : (
-        <DotsLoading
-          style={{ maxWidth: "320px", width: "50%", maxHeight: "initial" }}
-        />
-      )}
+        ) : (
+          <DotsLoading
+            style={{ maxWidth: "320px", width: "50%", maxHeight: "initial" }}
+          />
+        )}
 
-      <ImageCropModal
-        visible={isModalVisible}
-        onClose={handleModalClose}
-        onCropComplete={handleCrop}
-        aspect={16 / 9}
-        imageType={rawThumbnail ? rawThumbnail.type : undefined}
-        imageName={rawThumbnail ? rawThumbnail.name : undefined}
-        imageUrl={rawThumbnail ? URL.createObjectURL(rawThumbnail) : undefined}
-      />
-    </Authenticated>
+        <ImageCropModal
+          visible={isModalVisible}
+          onClose={handleModalClose}
+          onCropComplete={handleCrop}
+          aspect={16 / 9}
+          imageType={rawThumbnail ? rawThumbnail.type : undefined}
+          imageName={rawThumbnail ? rawThumbnail.name : undefined}
+          imageUrl={
+            rawThumbnail ? URL.createObjectURL(rawThumbnail) : undefined
+          }
+        />
+      </Authenticated>
+    </>
   );
 };
 
