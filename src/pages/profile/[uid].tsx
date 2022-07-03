@@ -33,6 +33,8 @@ import DeleteConfirmModal from "../../components/modals/DeleteConfirmModal";
 import Head from "next/head";
 import { getFollowers } from "../../api/profile";
 import FollowerCard from "../../components/profileComponents/FollowerCard";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface ProfileProps {
   user: UserPublicProfile;
@@ -175,7 +177,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       //full page reload
       window.location.reload();
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 
@@ -343,7 +345,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
@@ -354,16 +356,20 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps<ProfileProps, Params> = async (
   context
 ) => {
-  const params = context.params!;
+  try {
+    const params = context.params!;
 
-  const [userData, userPosts] = await Promise.all([
-    getPublicUserProfile(params.uid),
-    getUserPosts(params.uid),
-  ]);
+    const [userData, userPosts] = await Promise.all([
+      getPublicUserProfile(params.uid),
+      getUserPosts(params.uid),
+    ]);
 
-  return {
-    props: { user: userData, userPosts },
-  };
+    return {
+      props: { user: userData, userPosts },
+    };
+  } catch (error) {
+    return { notFound: true };
+  }
 };
 
 export default Profile;

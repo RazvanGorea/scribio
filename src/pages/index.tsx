@@ -7,6 +7,8 @@ import { useAuth } from "../context/AuthContext";
 import UploadAvatarModal from "../components/modals/UploadAvatarModal";
 import PostCardsRenderer from "../components/PostCardsRenderer";
 import Head from "next/head";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface HomeProps {
   posts: GetPostsResponse;
@@ -36,7 +38,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
         data: oldData?.data ? [...oldData.data, ...res.data] : res.data,
       }));
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 

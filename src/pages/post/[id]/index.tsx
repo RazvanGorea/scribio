@@ -38,6 +38,8 @@ import PostAppreciations from "../../../components/postComponents/PostAppreciati
 import PostControlMobile from "../../../components/postComponents/PostControlMobile";
 import DeleteConfirmModal from "../../../components/modals/DeleteConfirmModal";
 import Head from "next/head";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface PostProps {
   post: PostType;
@@ -245,7 +247,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
       // Redirect with full page reload
       window.location.replace("/");
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) toast.error(error.response?.data.message);
     }
   };
 
@@ -365,7 +367,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false,
+    fallback: "blocking",
   };
 };
 
@@ -376,16 +378,20 @@ interface Params extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps<PostProps, Params> = async (
   context
 ) => {
-  const params = context.params!;
+  try {
+    const params = context.params!;
 
-  const post = await getPostById(params.id);
+    const post = await getPostById(params.id);
 
-  const description = await getUserDescription(post.author._id);
+    const description = await getUserDescription(post.author._id);
 
-  // Pass post data to the page via props
-  return {
-    props: { post, authorDescription: description },
-  };
+    // Pass post data to the page via props
+    return {
+      props: { post, authorDescription: description },
+    };
+  } catch (error) {
+    return { notFound: true };
+  }
 };
 
 export default Post;

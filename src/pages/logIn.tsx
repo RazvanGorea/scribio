@@ -91,7 +91,6 @@ const SignIn: NextPage = () => {
                   clientId={config.googleClientId}
                   buttonText="Continue with Google"
                   onSuccess={googleLogin}
-                  onFailure={(d) => console.log(d)}
                   theme={theme}
                 />
               </>

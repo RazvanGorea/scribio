@@ -47,12 +47,8 @@ const NewPost: NextPage = () => {
         content: data,
       });
 
-      await Promise.all([
-        revalidatePage(`/profile/${user._id}`),
-        revalidatePage(`/post/${res.postId}`),
-      ]);
+      await revalidatePage(`/profile/${user._id}`);
 
-      // console.log(res);
       setSubmitting(false);
 
       // Redirect to created post with full reload
@@ -68,7 +64,6 @@ const NewPost: NextPage = () => {
   };
 
   const handleCrop = (file: File) => {
-    console.log(file);
     setCroppedThumbnail(file);
     setModalVisibility(false);
   };

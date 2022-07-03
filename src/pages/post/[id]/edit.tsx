@@ -53,12 +53,6 @@ const EditPost: NextPage = () => {
       // Get editor data
       const data = await editorRef.current.save();
 
-      console.log({
-        title: values.title,
-        thumbnail: croppedThumbnail || undefined,
-        content: data,
-      });
-
       // Update post
       await updatePost(post._id, {
         title: values.title,
@@ -71,25 +65,21 @@ const EditPost: NextPage = () => {
         revalidatePage(`/post/${post._id}`),
       ]);
 
-      // console.log(res);
       setSubmitting(false);
 
       // Redirect to created post with full reload
       window.location.href = `/post/${post._id}`;
     } catch (error: any) {
-      console.log(error.response.data);
       setSubmitting(false);
     }
   };
 
   const handleImageUpload = (file: File) => {
-    console.log(file);
     setRawThumbnail(file);
     setModalVisibility(true);
   };
 
   const handleCrop = (file: File) => {
-    console.log(file);
     setCroppedThumbnail(file);
     setModalVisibility(false);
   };

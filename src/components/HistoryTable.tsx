@@ -48,8 +48,6 @@ const HistoryTable: React.FC<HistoryTableProps> = ({
   loading,
   hasMore,
 }) => {
-  console.log(data);
-
   const list = data?.map((item) => (
     <tr
       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"

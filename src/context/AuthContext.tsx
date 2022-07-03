@@ -82,7 +82,6 @@ export const AuthProvider: React.FC = ({ children }) => {
       const data = await getFollowings();
       setFollowings(data);
     } catch (error) {
-      console.log(error);
       setFollowings([]);
     }
   }, []);

@@ -15,9 +15,7 @@ const Saves: NextPage = () => {
   const [savedPosts, setSavedPosts] = useState<PostPreview[]>();
 
   useEffect(() => {
-    getSaves()
-      .then((saves) => setSavedPosts(saves))
-      .catch((err) => console.log(err));
+    getSaves().then((saves) => setSavedPosts(saves));
   }, []);
 
   const handleUnsave = (postId: string) => {
