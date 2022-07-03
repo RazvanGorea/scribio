@@ -53,19 +53,12 @@ const Editor: React.FC<EditorProps> = ({ onInitialize, defaultValue }) => {
         defaultValue
           ? defaultValue
           : {
-              time: 1556098174501,
+              time: Date.now(),
               blocks: [
-                {
-                  type: "header",
-                  data: {
-                    text: "Header",
-                    level: 1,
-                  },
-                },
                 {
                   type: "paragraph",
                   data: {
-                    text: "Some text.",
+                    text: "Your content goes here...",
                   },
                 },
               ],

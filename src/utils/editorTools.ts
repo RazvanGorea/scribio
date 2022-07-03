@@ -1,10 +1,8 @@
 // @ts-nocheck
 
-import Embed from "@editorjs/embed";
 import List from "@editorjs/list";
 import Warning from "@editorjs/warning";
 import Code from "@editorjs/code";
-import Raw from "@editorjs/raw";
 import Header from "@editorjs/header";
 import Marker from "@editorjs/marker";
 import CheckList from "@editorjs/checklist";
@@ -14,7 +12,6 @@ import Table from "editorjs-table";
 import Quote from "@editorjs/quote";
 
 export const EDITOR_JS_TOOLS = {
-  embed: Embed,
   table: {
     class: Table,
     inlineToolbar: true,
@@ -28,7 +25,6 @@ export const EDITOR_JS_TOOLS = {
   warning: Warning,
   code: Code,
   quote: Quote,
-  raw: Raw,
   header: Header,
   checklist: CheckList,
   delimiter: Delimiter,

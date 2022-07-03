@@ -48,7 +48,7 @@ const AuthorDetailsBox: React.FC<AuthorDetailsBoxProps> = ({
     followersText = followers + (followers === 1 ? " Follower" : " Followers");
 
   return (
-    <div className="sticky hidden lg:block lg:max-w-[19rem] xl:max-w-sm px-5 py-6 bg-white rounded-lg shadow-lg dark:bg-gray-700 h-fit top-[4.4rem]">
+    <div className="sticky hidden lg:block lg:max-w-[19rem] xl:max-w-sm w-full px-5 py-6 bg-white rounded-lg shadow-lg dark:bg-gray-700 h-fit top-[4.4rem]">
       <div className="flex">
         <Avatar href={`/profile/${uid}`} src={avatar} size={65} />
         <div className="pl-3">

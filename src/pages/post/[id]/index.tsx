@@ -321,6 +321,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
             postId={post._id}
             onDelete={() => setConfirmDelete({ postId: post._id })}
           />
+          <h1>{post.title}</h1>
           {content}
         </article>
         <AuthorDetailsBox
