@@ -340,7 +340,7 @@ const Post: NextPage<PostProps> = ({ post, authorDescription }) => {
           username={post.author.username}
           userDescription={authorDescription}
           isPersonal={isPersonal}
-          onDelete={deletePostHandler}
+          onDelete={() => setConfirmDelete({ postId: post._id })}
           postId={post._id}
         />
       </div>
