@@ -7,7 +7,7 @@ interface CodeProps {
 const Code: React.FC<CodeProps> = ({ code }) => {
   return (
     <pre className="break-all whitespace-pre-wrap">
-      <code className="language-html">{code}</code>
+      <code>{code}</code>
     </pre>
   );
 };

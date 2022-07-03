@@ -5,7 +5,7 @@ const ReactCodeInput = dynamic(import("react-code-input"));
 import Button from "../form/Button";
 
 interface ConfirmSignUpFormProps {
-  onSubmit: (value: string) => Promise<void>;
+  onSubmit: (value: string) => void;
   heading?: string;
   description?: string;
 }
@@ -23,7 +23,7 @@ const ConfirmCodeForm: React.FC<ConfirmSignUpFormProps> = ({
     e.preventDefault();
 
     setLoading(true);
-    onSubmit(value).then(() => setLoading(false));
+    onSubmit(value);
   };
 
   return (
