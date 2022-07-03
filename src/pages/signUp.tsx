@@ -8,7 +8,6 @@ import SignUpForm, { SignUpFormValues } from "../components/forms/SignUpForm";
 import ConfirmSignUpForm from "../components/forms/ConfirmCodeForm";
 import { NextPage } from "next";
 import Unauthenticated from "../components/Unauthenticated";
-import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Head from "next/head";

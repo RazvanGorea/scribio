@@ -15,7 +15,7 @@ import {
 import Container from "../../components/layout/Container";
 import Tabs from "../../components/Tabs";
 import { PostPreview } from "../../types/Post.type";
-import { UserPublicProfile } from "../../types/User.type";
+import { BasicUser, UserPublicProfile } from "../../types/User.type";
 import PostCardsRenderer from "../../components/PostCardsRenderer";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/router";
@@ -31,6 +31,8 @@ import { FiEdit, FiTrash } from "react-icons/fi";
 import { revalidatePage } from "../../api/global";
 import DeleteConfirmModal from "../../components/modals/DeleteConfirmModal";
 import Head from "next/head";
+import { getFollowers } from "../../api/profile";
+import FollowerCard from "../../components/profileComponents/FollowerCard";
 
 interface ProfileProps {
   user: UserPublicProfile;
@@ -40,10 +42,6 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   const router = useRouter();
   const { isUserInitialized, user: authUser, fetchFollowings } = useAuth();
-
-  // Check if current profile belongs to authenticated user
-  const isPersonal = user?._id === authUser?._id;
-
   const [tab, setTab] = useState("posts");
   const [followData, setFollowData] = useState<
     | {
@@ -60,6 +58,21 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   });
   const [isSortLoading, setSortLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ postId: string }>();
+  const [followers, setFollowers] = useState<BasicUser[]>();
+
+  // Check if current profile belongs to authenticated user
+  const isPersonal = user?._id === authUser?._id;
+
+  const tabs = isPersonal
+    ? [
+        { text: "Posts", value: "posts" },
+        { text: "Followers", value: "followers" },
+        { text: "About", value: "about" },
+      ]
+    : [
+        { text: "Posts", value: "posts" },
+        { text: "About", value: "about" },
+      ];
 
   const fetchUserFollowData = useCallback(async () => {
     if (isUserInitialized && !isPersonal) {
@@ -69,6 +82,10 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       ]);
 
       setFollowData({ isFollowing: isFollow, followers });
+    } else if (isUserInitialized && isPersonal) {
+      const res = await getFollowers();
+      setFollowData({ isFollowing: false, followers: res.length });
+      setFollowers(res);
     } else {
       const followers = await getUserFollowersNumber(user._id);
       setFollowData({ isFollowing: false, followers });
@@ -83,6 +100,10 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
   useEffect(() => {
     fetchUserFollowData();
     fetchUserTotalViews();
+
+    return () => {
+      setFollowers(undefined);
+    };
   }, [fetchUserFollowData, fetchUserTotalViews]);
 
   const followHandler = () => {
@@ -158,7 +179,7 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
     }
   };
 
-  let display: JSX.Element;
+  let display: JSX.Element | JSX.Element[];
   switch (tab) {
     case "posts":
       if (isSortLoading) {
@@ -209,15 +230,28 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
       );
       break;
 
-    case "series":
-      display = (
-        <EmptyComponent
-          animationData={emptySearchAnim}
-          text={
-            isPersonal ? "You have no series" : `${user.username} has no series`
-          }
-        />
-      );
+    case "followers":
+      display =
+        followers && followers.length > 0 ? (
+          followers.map((follower) => (
+            <FollowerCard
+              onClick={() => setTab("posts")}
+              key={follower._id}
+              username={follower.username}
+              avatar={follower.avatar}
+              userId={follower._id}
+            />
+          ))
+        ) : (
+          <EmptyComponent
+            animationData={emptySearchAnim}
+            text={
+              isPersonal
+                ? "You have no followers"
+                : `${user.username} has no followers`
+            }
+          />
+        );
       break;
 
     default:
@@ -251,52 +285,42 @@ const Profile: React.FC<ProfileProps> = ({ user, userPosts }) => {
         <title>{user.username} | Scribio</title>
       </Head>
       <Container>
-        <ProfileHeader
-          avatar={user.avatar}
-          onFollow={followHandler}
-          username={user.username}
-          followers={followData?.followers}
-          isFollowing={followData?.isFollowing}
-          isPersonal={isPersonal}
-        />
-        <div className="flex items-center justify-between my-4">
-          <div className="hidden sm:block">
-            <Tabs
-              value={tab}
-              items={[
-                { text: "Posts", value: "posts" },
-                { text: "Series", value: "series" },
-                { text: "About", value: "about" },
-              ]}
-              onChange={(val) => setTab(val)}
-            />
+        <div className="pb-11 sm:pb-0">
+          <ProfileHeader
+            avatar={user.avatar}
+            onFollow={followHandler}
+            username={user.username}
+            followers={followData?.followers}
+            isFollowing={followData?.isFollowing}
+            isPersonal={isPersonal}
+          />
+          <div className="flex items-center justify-between my-4">
+            <div className="hidden sm:block">
+              <Tabs value={tab} items={tabs} onChange={(val) => setTab(val)} />
+            </div>
+            {(tab === "posts" || tab === "series") && (
+              <DropDown
+                value={sort}
+                items={[
+                  { text: "Newer first", value: "newer" },
+                  { text: "Older first", value: "older" },
+                  { text: "Most popular", value: "popularity" },
+                ]}
+                onSelect={(item) => {
+                  setSortLoading(true);
+                  setSort(item);
+                }}
+              />
+            )}
           </div>
-          {(tab === "posts" || tab === "series") && (
-            <DropDown
-              value={sort}
-              items={[
-                { text: "Newer first", value: "newer" },
-                { text: "Older first", value: "older" },
-                { text: "Most popular", value: "popularity" },
-              ]}
-              onSelect={(item) => {
-                setSortLoading(true);
-                setSort(item);
-              }}
-            />
-          )}
+          {display}
         </div>
-        {display}
       </Container>
 
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg dark:bg-gray-800 sm:hidden shadow-black">
         <Tabs
           value={tab}
-          items={[
-            { text: "Posts", value: "posts" },
-            { text: "Series", value: "series" },
-            { text: "About", value: "about" },
-          ]}
+          items={tabs}
           fullWidth
           onChange={(val) => setTab(val)}
         />

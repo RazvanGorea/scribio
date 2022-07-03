@@ -15,6 +15,7 @@ import Unauthenticated from "../components/Unauthenticated";
 import toast from "react-hot-toast";
 import axios, { AxiosError } from "axios";
 import Head from "next/head";
+import config from "../config";
 
 const SignIn: NextPage = () => {
   const { theme } = useTheme();
@@ -78,19 +79,23 @@ const SignIn: NextPage = () => {
           </div>
           <div className="flex flex-col items-center justify-center w-full h-full px-2 md:w-1/2">
             <LogInForm onSubmit={submit} />
-            <div className="relative flex justify-center w-full max-w-xs mt-3 mb-5 text-black dark:text-white">
-              <h2 className="relative z-[1] px-3 text-center bg-gray-100 dark:bg-gray-800">
-                Or
-              </h2>
-              <hr className="absolute w-full top-[60%] border-t-2" />
-            </div>
-            <GoogleLogin
-              clientId="354641229420-jlplpfo84luiaevi1v4o15kea9d216h4.apps.googleusercontent.com"
-              buttonText="Continue with Google"
-              onSuccess={googleLogin}
-              onFailure={(d) => console.log(d)}
-              theme={theme}
-            />
+            {config.googleClientId && (
+              <>
+                <div className="relative flex justify-center w-full max-w-xs mt-3 mb-5 text-black dark:text-white">
+                  <h2 className="relative z-[1] px-3 text-center bg-gray-100 dark:bg-gray-800">
+                    Or
+                  </h2>
+                  <hr className="absolute w-full top-[60%] border-t-2" />
+                </div>
+                <GoogleLogin
+                  clientId={config.googleClientId}
+                  buttonText="Continue with Google"
+                  onSuccess={googleLogin}
+                  onFailure={(d) => console.log(d)}
+                  theme={theme}
+                />
+              </>
+            )}
           </div>
         </div>
       </Unauthenticated>

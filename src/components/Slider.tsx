@@ -27,6 +27,11 @@ const Slider: React.FC<SliderProps> = ({ progress, onChange }) => {
               setIsMouseDown(false);
               onChange(internalProgress);
             }}
+            onTouchStart={() => setIsMouseDown(true)}
+            onTouchEnd={() => {
+              setIsMouseDown(false);
+              onChange(internalProgress);
+            }}
             type="range"
             className="absolute w-full h-6 p-0 bg-transparent appearance-none form-range focus:outline-none focus:ring-0 focus:shadow-none"
             min={0}

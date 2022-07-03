@@ -1,4 +1,5 @@
 import React from "react";
+import Footer from "./Footer";
 import Header from "./Header";
 import Page from "./Page";
 
@@ -9,6 +10,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     <>
       <Header />
       <Page>{children}</Page>
+      <Footer />
     </>
   );
 };

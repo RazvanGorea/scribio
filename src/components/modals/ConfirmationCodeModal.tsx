@@ -7,7 +7,7 @@ interface ConfirmationCodeModalProps {
   description: string;
   visible: boolean;
   onClose: () => void;
-  onSubmit: (value: string) => void;
+  onSubmit: (value: string) => Promise<void>;
 }
 
 const ConfirmationCodeModal: React.FC<ConfirmationCodeModalProps> = ({
