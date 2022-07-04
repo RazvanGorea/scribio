@@ -42,19 +42,25 @@ const Edit: NextPage = () => {
   // Reload page
   const reload = () => router.reload();
 
+  const revalidatePages = async () => {
+    if (!user) return;
+
+    const ids = await getUserPostsId(user._id);
+
+    const promises = [revalidatePage(`/profile/${user._id}`)];
+
+    ids.forEach((id) => promises.push(revalidatePage(`/post/${id}`)));
+
+    return await Promise.all(promises);
+  };
+
   const updateUsernameHandler = async (newUsername: string) => {
     if (!user) return;
 
     try {
       await updateUsername(newUsername);
 
-      const ids = await getUserPostsId(user._id);
-
-      // Revalidate posts
-      if (ids.length > 0) ids.map((id) => revalidatePage(`/post/${id}`));
-
-      // Revalidate profile
-      revalidatePage(`/profile/${user._id}`);
+      await revalidatePages();
 
       reload();
     } catch (error) {
@@ -68,13 +74,7 @@ const Edit: NextPage = () => {
     try {
       await updateDescription(newDescription);
 
-      const ids = await getUserPostsId(user._id);
-
-      // Revalidate posts
-      if (ids.length > 0) ids.map((id) => revalidatePage(`/post/${id}`));
-
-      // Revalidate profile
-      revalidatePage(`/profile/${user._id}`);
+      await revalidatePages();
 
       reload();
     } catch (error) {

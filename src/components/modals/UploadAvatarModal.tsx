@@ -40,6 +40,16 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
     }
   };
 
+  const revalidatePages = async () => {
+    const ids = await getUserPostsId(userId);
+
+    const promises = [revalidatePage(`/profile/${userId}`)];
+
+    ids.forEach((id) => promises.push(revalidatePage(`/post/${id}`)));
+
+    return await Promise.all(promises);
+  };
+
   const handleRawAvatarChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const files = e.target.files;
     const file = files ? files[0] : null;
@@ -73,13 +83,7 @@ const UploadAvatarModal: React.FC<UploadAvatarModalProps> = ({
 
       await updateAvatar(finalAvatar);
 
-      const postsId = await getUserPostsId(userId);
-
-      // Revalidate user's posts
-      postsId.forEach((id) => revalidatePage(`posts/${id}`));
-
-      // Revalidate user profile
-      await revalidatePage(`profile/${userId}`);
+      await revalidatePages();
 
       // Reload page
       router.reload();
