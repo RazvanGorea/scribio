@@ -13,7 +13,7 @@ const Unauthenticated: React.FC<UnauthenticatedProps> = ({
   redirectPath,
   redirectQuery,
 }) => {
-  const { isUserInitialized } = useAuth();
+  const { isUserInitialized, user } = useAuth();
   const router = useRouter();
 
   // Redirect if user is authenticated
@@ -24,7 +24,7 @@ const Unauthenticated: React.FC<UnauthenticatedProps> = ({
   }, [isUserInitialized, redirectPath, router, redirectQuery]);
 
   // Show children if user is not authenticated
-  return !isUserInitialized ? <>{children}</> : <></>;
+  return !user ? <>{children}</> : <></>;
 };
 
 export default Unauthenticated;
