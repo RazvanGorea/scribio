@@ -70,7 +70,7 @@ const History: NextPage = () => {
         <title>History | Scribio</title>
       </Head>
       <Authenticated redirectPath="/logIn">
-        <Container style={{ overflowX: "auto" }} sm>
+        <Container sm>
           {!loading && data?.data.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <Lottie

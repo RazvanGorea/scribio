@@ -37,7 +37,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         </div>
       </div>
       {isPersonal ? (
-        <Button href="/profile/edit" active={isFollowing} icon={FiEdit}>
+        <Button href="/profile/edit" active={isFollowing} icon={FiEdit} sm>
           Edit
         </Button>
       ) : (
@@ -47,6 +47,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           style={{ textTransform: "uppercase" }}
           active={isFollowing}
           icon={isFollowing ? AiOutlineCheck : undefined}
+          sm
         >
           {isFollowing ? "Following" : "Follow"}
         </Button>
