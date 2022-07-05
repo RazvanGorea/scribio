@@ -1,9 +1,7 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { GetPostsResponse, getPosts } from "../api/posts";
 import Container from "../components/layout/Container";
-import { useAuth } from "../context/AuthContext";
 import PostCardsRenderer from "../components/PostCardsRenderer";
 import Head from "next/head";
 import axios from "axios";
@@ -14,9 +12,6 @@ interface HomeProps {
 }
 
 const Home: NextPage<HomeProps> = ({ posts }) => {
-  const router = useRouter();
-
-  const { user } = useAuth();
   const [postsData, setPostsData] = useState<GetPostsResponse>(posts);
 
   const fetchPosts = async () => {
