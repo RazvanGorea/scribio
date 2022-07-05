@@ -6,9 +6,7 @@ import Input from "../form/Input";
 
 // Validation
 const valuesSchema = Yup.object({
-  title: Yup.string()
-    .required("required")
-    .matches(/^[a-zA-Z0-9  !]+$/, "Only alphanumeric characters are allowed!"),
+  title: Yup.string().required("required"),
 });
 
 // Infer form values
