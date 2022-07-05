@@ -1,10 +1,9 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { GetPostsResponse, getPosts } from "../api/posts";
 import Container from "../components/layout/Container";
 import { useAuth } from "../context/AuthContext";
-import UploadAvatarModal from "../components/modals/UploadAvatarModal";
 import PostCardsRenderer from "../components/PostCardsRenderer";
 import Head from "next/head";
 import axios from "axios";
@@ -18,16 +17,7 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
   const router = useRouter();
 
   const { user } = useAuth();
-  const [isUploadAvatarModalVisible, setUploadAvatarModalVisibility] =
-    useState(false);
   const [postsData, setPostsData] = useState<GetPostsResponse>(posts);
-
-  useEffect(() => {
-    const showUploadAvatarModal = router.query.showUploadAvatarModal;
-
-    if (showUploadAvatarModal && user && !user.avatar.key)
-      setUploadAvatarModalVisibility(true);
-  }, [router, user]);
 
   const fetchPosts = async () => {
     try {
@@ -54,18 +44,6 @@ const Home: NextPage<HomeProps> = ({ posts }) => {
           onFetchMore={fetchPosts}
         />
       </Container>
-      {user && (
-        <UploadAvatarModal
-          userId={user._id}
-          visible={isUploadAvatarModalVisible}
-          onClose={() => {
-            setUploadAvatarModalVisibility(false);
-            // Remove url query
-            router.replace("/");
-          }}
-          userAvatar={user.avatar}
-        />
-      )}
     </>
   );
 };
